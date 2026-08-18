@@ -1,14 +1,13 @@
 import java.util.Locale;
-import java.util.Scanner;
-
 /**
  * Entry point for the doe chatbot application.
  */
 import java.util.Scanner;
+import java.util.ArrayList;
 public class doe {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
+        ArrayList<String> TODO = new ArrayList<>();
         String banner = "____________________________________________________________\n"
                 + "     _          \n"
                 + "  __| | ___  ___\n"
@@ -22,6 +21,7 @@ public class doe {
                 + "1. neigh\n"
                 + "2. meow\n"
                 + "3. list\n"
+                + "4. todo\n"
                 + "____________________________________________________________\n"
                 + "type \"bye\" to exit\n"
                 + "____________________________________________________________\n";
@@ -42,8 +42,15 @@ public class doe {
                 + "4. retire as a manager(hopefully)\n"
                 + "____________________________________________________________\n";
 
+        String todo = "____________________________________________________________\n"
+                + "modify todo list\n"
+                + "1. add\n"
+                + "2. remove\n"
+                + "3. view\n"
+                + "____________________________________________________________\n";
+
         String bye = "____________________________________________________________\n"
-                + "Bye. Hope to see you again soon!\n"
+                + "bye. Hope to see you again soon!\n"
                 + "____________________________________________________________\n";
 
         System.out.println(banner);
@@ -58,6 +65,36 @@ public class doe {
                     break;
                 case "list":
                     System.out.println(list);
+                    break;
+                case "todo":
+                    System.out.println(todo);
+                    String todo_input = scanner.nextLine().toLowerCase();
+                    switch (todo_input) {
+                        case "add":
+                            System.out.println("____________________________________________________________\n"
+                                    + "what you want to add?\n"
+                                    + "____________________________________________________________\n");
+                            String to_add = scanner.nextLine();
+                            TODO.add(to_add);
+                            System.out.println(banner);
+                            break;
+                        case "remove":
+                            System.out.println("____________________________________________________________\n"
+                                    + "what you want to remove?\n"
+                                    + "____________________________________________________________\n");
+                            String to_remove = scanner.nextLine();
+                            TODO.remove(to_remove);
+                            System.out.println(banner);
+                            break;
+                        case "view":
+                            for (int i = 0; i < TODO.size(); i++) {
+                                System.out.println((i + 1) + ". " + TODO.get(i));
+                            }
+                            System.out.println(banner);
+                            break;
+                        default:
+                            System.out.println("wat");
+                    }
                     break;
                 case "bye":
                     System.out.println(bye);
