@@ -8,10 +8,10 @@ public class doe {
     /** Prints the Todo items with their current completion status. */
     private static void printTodoList(ArrayList<Task> todoItems) {
         System.out.println("____________________________________________________________");
-        System.out.println("Here are the tasks in your list:");
+        System.out.println("here are the tasks in your list:");
         for (int i = 0; i < todoItems.size(); i++) {
             Task task = todoItems.get(i);
-            System.out.println((i + 1) + ". [" + task.getStatusIcon() + "] " + task.getDescription());
+            System.out.println((i + 1) + ". " + task);
         }
         System.out.println("____________________________________________________________");
     }
@@ -21,10 +21,10 @@ public class doe {
      */
     private static int getTaskIndex(Scanner scanner, int numberOfTasks) {
         if (numberOfTasks == 0) {
-            System.out.println("There are no tasks to mark yet. Add a task first.");
+            System.out.println("there are no tasks to mark yet. add a task first.");
             return -1;
         }
-        System.out.println("Enter the task number:");
+        System.out.println("enter the task number:");
         try {
             int taskNumber = Integer.parseInt(scanner.nextLine().trim());
             if (taskNumber >= 1 && taskNumber <= numberOfTasks) {
@@ -33,7 +33,7 @@ public class doe {
         } catch (NumberFormatException exception) {
             // The invalid-input message below explains how to correct the entry.
         }
-        System.out.println("That task number is incorrect. Please enter a number from 1 to " + numberOfTasks + ".");
+        System.out.println("that task number is incorrect. please enter a number from 1 to " + numberOfTasks + ".");
         return -1;
     }
 
@@ -58,7 +58,7 @@ public class doe {
                 + "____________________________________________________________\n";
 
         String neigh = "____________________________________________________________\n"
-                + "EURHGGGHHHHH!\n"
+                + "eurhggghhhhh!\n"
                 + "____________________________________________________________\n";
 
         String meow = "____________________________________________________________\n"
@@ -83,36 +83,80 @@ public class doe {
                 + "____________________________________________________________\n";
 
         String bye = "____________________________________________________________\n"
-                + "bye. Hope to see you again soon!\n"
+                + "bye. hope to see you again soon!\n"
                 + "____________________________________________________________\n";
 
         System.out.println(banner);
         while(true){
             String input = scanner.nextLine().toLowerCase();
             switch (input) {
+                case "1":
                 case "neigh":
                     System.out.println(neigh);
                     break;
+                case "2":
                 case "meow":
                     System.out.println(meow);
                     break;
+                case "3":
                 case "list":
                     System.out.println(list);
                     break;
+                case "4":
                 case "todo":
                     todoMenu:
                     while (true) {
                         System.out.println(todo);
                         String todo_input = scanner.nextLine().toLowerCase();
                         switch (todo_input) {
+                        case "1":
                         case "add":
-                            System.out.println("____________________________________________________________\n"
-                                    + "what you want to add?\n"
-                                    + "____________________________________________________________\n");
-                            String to_add = scanner.nextLine();
-                            TODO.add(new Task(to_add));
+                            addTask:
+                            while (true) {
+                                System.out.println("____________________________________________________________\n"
+                                        + "what type of task would you like to add?\n"
+                                        + "1. todo\n"
+                                        + "2. deadline\n"
+                                        + "3. event\n"
+                                        + "____________________________________________________________\n");
+                                String taskType = scanner.nextLine().toLowerCase();
+                                switch (taskType) {
+                                case "1":
+                                case "todo":
+                                    System.out.println("____________________________________________________________\n"
+                                            + "what you want to add?\n"
+                                            + "____________________________________________________________\n");
+                                    TODO.add(new Task(scanner.nextLine()));
+                                    break addTask;
+                                case "2":
+                                case "deadline":
+                                    System.out.println("____________________________________________________________\n"
+                                            + "what you want to add?\n"
+                                            + "____________________________________________________________\n");
+                                    String deadlineTask = scanner.nextLine();
+                                    System.out.println("____________________________________________________________\n"
+                                            + "type a sentence to describe its deadline (e.g. by friday 5pm):\n"
+                                            + "____________________________________________________________\n");
+                                    TODO.add(new Deadline(deadlineTask, scanner.nextLine()));
+                                    break addTask;
+                                case "3":
+                                case "event":
+                                    System.out.println("____________________________________________________________\n"
+                                            + "what you want to add?\n"
+                                            + "____________________________________________________________\n");
+                                    String eventTask = scanner.nextLine();
+                                    System.out.println("____________________________________________________________\n"
+                                            + "type a sentence to describe its timing (e.g. from 2pm to 4pm):\n"
+                                            + "____________________________________________________________\n");
+                                    TODO.add(new Event(eventTask, scanner.nextLine()));
+                                    break addTask;
+                                default:
+                                    System.out.println("that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.");
+                                }
+                            }
                             System.out.println(banner);
                             break todoMenu;
+                        case "2":
                         case "remove":
                             System.out.println("____________________________________________________________\n"
                                     + "what you want to remove?\n"
@@ -130,37 +174,40 @@ public class doe {
                             }
                             System.out.println(banner);
                             break todoMenu;
+                        case "3":
                         case "view":
                             printTodoList(TODO);
                             System.out.println(banner);
                             break todoMenu;
+                        case "4":
                         case "mark":
                             System.out.println("____________________________________________________________");
-                            System.out.println("To mark a task as done, enter its number from the list.");
+                            System.out.println("to mark a task as done, enter its number from the list.");
                             System.out.println("____________________________________________________________");
                             printTodoList(TODO);
                             int markIndex = getTaskIndex(scanner, TODO.size());
                             if (markIndex >= 0) {
                                 TODO.get(markIndex).markAsDone();
                                 System.out.println("____________________________________________________________");
-                                System.out.println("Nice! I've marked this task as done:");
-                                System.out.println("[X] " + TODO.get(markIndex).getDescription());
+                                System.out.println("nice! i've marked this task as done:");
+                                System.out.println("[x] " + TODO.get(markIndex).getDescription());
                                 System.out.println("____________________________________________________________");
                                 printTodoList(TODO);
                                 System.out.println(banner);
                                 break todoMenu;
                             }
                             break;
+                        case "5":
                         case "unmark":
                             System.out.println("____________________________________________________________");
-                            System.out.println("To mark a task as not done, enter its number from the list.");
+                            System.out.println("to mark a task as not done, enter its number from the list.");
                             System.out.println("____________________________________________________________");
                             printTodoList(TODO);
                             int unmarkIndex = getTaskIndex(scanner, TODO.size());
                             if (unmarkIndex >= 0) {
                                 TODO.get(unmarkIndex).markAsNotDone();
                                 System.out.println("____________________________________________________________");
-                                System.out.println("OK, I've marked this task as not done yet:");
+                                System.out.println("ok, i've marked this task as not done yet:");
                                 System.out.println("[ ] " + TODO.get(unmarkIndex).getDescription());
                                 System.out.println("____________________________________________________________");
                                 printTodoList(TODO);
@@ -169,7 +216,7 @@ public class doe {
                             }
                             break;
                         default:
-                            System.out.println("That option is incorrect. Please choose one of the Todo options below.");
+                            System.out.println("that option is incorrect. please choose one of the todo options below.");
                         }
                     }
                     break;

@@ -18,7 +18,7 @@ public class Task {
 
     /** Returns the status icon displayed beside this task. */
     public String getStatusIcon() {
-        return isDone ? "X" : " ";
+        return isDone ? "x" : " ";
     }
 
     /** Marks this task as completed. */
@@ -29,5 +29,11 @@ public class Task {
     /** Marks this task as incomplete. */
     public void markAsNotDone() {
         isDone = false;
+    }
+
+    /** Returns this task in the format used when displaying a task list. */
+    @Override
+    public String toString() {
+        return "[t][" + getStatusIcon() + "] " + description;
     }
 }
