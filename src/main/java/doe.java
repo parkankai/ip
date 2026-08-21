@@ -222,7 +222,7 @@ public class doe {
 
     }
 
-    /** Prints the Todo items with their current completion status. */
+    /** Prints the Todo items with their current completion status.  */
     private static void printTodoList(ArrayList<Task> todoItems) {
         System.out.println("____________________________________________________________");
         System.out.println("here are the tasks in your list:");
