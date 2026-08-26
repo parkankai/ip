@@ -1,3 +1,6 @@
+package doe;
+
+
 /**
  * Deals with making sense of the user command and inputs.
  */

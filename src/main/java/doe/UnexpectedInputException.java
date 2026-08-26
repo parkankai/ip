@@ -1,3 +1,6 @@
+package doe;
+
+
 /**
  * Signals that the user entered a command or value that is not valid in the current prompt.
  */

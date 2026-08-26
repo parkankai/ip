@@ -1,3 +1,6 @@
+package doe;
+
+
 import java.awt.*;
 import java.util.Scanner;
 import java.util.List;
