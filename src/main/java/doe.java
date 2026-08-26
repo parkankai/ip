@@ -1,6 +1,9 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Entry point for the doe chatbot application.
@@ -201,15 +204,20 @@ public class doe {
                                                 break;
                                             }
                                             System.out.println("____________________________________________________________\n"
-                                                    + "type a sentence to describe its deadline (e.g. by friday 5pm):\n"
+                                                    + "input deadline in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1800):\n"
                                                     + "____________________________________________________________\n");
                                             String deadlineTiming = scanner.nextLine();
                                             if (preventCorrupt(deadlineTiming)) {
                                                 break;
                                             }
-                                            currentTodo.add(new Deadline(deadlineTask, deadlineTiming));
-                                            taskAdded = true;
-                                            break addTask;
+                                            try {
+                                                currentTodo.add(new Deadline(deadlineTask, deadlineTiming));
+                                                taskAdded = true;
+                                                break addTask;
+                                            } catch (java.time.format.DateTimeParseException e) {
+                                                printUnexpectedInputMessage("invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).");
+                                            }
+                                            break;
                                         case EVENT:
                                             System.out.println("____________________________________________________________\n"
                                                     + "what you want to add?\n"
@@ -219,15 +227,20 @@ public class doe {
                                                 break;
                                             }
                                             System.out.println("____________________________________________________________\n"
-                                                    + "type a sentence to describe its timing (e.g. from 2pm to 4pm):\n"
+                                                    + "input event time in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1100):\n"
                                                     + "____________________________________________________________\n");
                                             String eventTiming = scanner.nextLine();
                                             if (preventCorrupt(eventTiming)) {
                                                 break;
                                             }
-                                            currentTodo.add(new Event(eventTask, eventTiming));
-                                            taskAdded = true;
-                                            break addTask;
+                                            try {
+                                                currentTodo.add(new Event(eventTask, eventTiming));
+                                                taskAdded = true;
+                                                break addTask;
+                                            } catch (java.time.format.DateTimeParseException e) {
+                                                printUnexpectedInputMessage("invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).");
+                                            }
+                                            break;
                                         case EXIT:
                                             break addTask;
                                         case UNKNOWN:
