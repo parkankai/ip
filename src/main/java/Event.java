@@ -7,14 +7,19 @@ public class Event extends Task {
     private final String timing;
 
     /** Creates an incomplete event task with its description and timing note. */
-    public Event(String description, String timing) {
-        super(description);
+    public Event(String taskName, String timing) {
+        super(taskName);
         this.timing = timing;
+    }
+
+    @Override
+    public String toFileFormat(){
+        return "EVENT|"  + super.toFileFormat() + "|" + timing;
     }
 
     /** Returns this event in the format used when displaying a task list. */
     @Override
     public String toString() {
-        return "[e][" + getStatusIcon() + "] " + description + " (" + timing + ")";
+        return "[e][" + getStatusIcon() + "] " + taskName + " (" + timing + ")";
     }
 }

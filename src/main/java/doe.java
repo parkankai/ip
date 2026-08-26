@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entry point for the doe chatbot application.
@@ -87,7 +88,8 @@ public class doe {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> TODO = new ArrayList<>();
+        ToDoManager todoManager = new ToDoManager();
+        List<Task> currentTodo = todoManager.getTasks();
         String banner = "____________________________________________________________\n"
                 + "     _          \n"
                 + "  __| | ___  ___\n"
@@ -135,6 +137,14 @@ public class doe {
                 + "bye. hope to see you again soon!\n"
                 + "____________________________________________________________\n";
 
+        String saved = "____________________________________________________________\n"
+                + "item saved successfully!\n"
+                + "____________________________________________________________\n";
+
+        String removed = "____________________________________________________________\n"
+                + "item removed successfully!\n"
+                + "____________________________________________________________\n";
+
         System.out.println(banner);
         while (true) {
             String input = scanner.nextLine();
@@ -175,7 +185,11 @@ public class doe {
                                             System.out.println("____________________________________________________________\n"
                                                     + "what you want to add?\n"
                                                     + "____________________________________________________________\n");
-                                            TODO.add(new Task(scanner.nextLine()));
+                                            String newInput = scanner.nextLine();
+                                            if (preventCorrupt(newInput)) {
+                                                break;
+                                            }
+                                            currentTodo.add(new Todo(newInput));
                                             taskAdded = true;
                                             break addTask;
                                         case DEADLINE:
@@ -183,10 +197,17 @@ public class doe {
                                                     + "what you want to add?\n"
                                                     + "____________________________________________________________\n");
                                             String deadlineTask = scanner.nextLine();
+                                            if (preventCorrupt(deadlineTask)) {
+                                                break;
+                                            }
                                             System.out.println("____________________________________________________________\n"
                                                     + "type a sentence to describe its deadline (e.g. by friday 5pm):\n"
                                                     + "____________________________________________________________\n");
-                                            TODO.add(new Deadline(deadlineTask, scanner.nextLine()));
+                                            String deadlineTiming = scanner.nextLine();
+                                            if (preventCorrupt(deadlineTiming)) {
+                                                break;
+                                            }
+                                            currentTodo.add(new Deadline(deadlineTask, deadlineTiming));
                                             taskAdded = true;
                                             break addTask;
                                         case EVENT:
@@ -194,10 +215,17 @@ public class doe {
                                                     + "what you want to add?\n"
                                                     + "____________________________________________________________\n");
                                             String eventTask = scanner.nextLine();
+                                            if (preventCorrupt(eventTask)) {
+                                                break;
+                                            }
                                             System.out.println("____________________________________________________________\n"
                                                     + "type a sentence to describe its timing (e.g. from 2pm to 4pm):\n"
                                                     + "____________________________________________________________\n");
-                                            TODO.add(new Event(eventTask, scanner.nextLine()));
+                                            String eventTiming = scanner.nextLine();
+                                            if (preventCorrupt(eventTiming)) {
+                                                break;
+                                            }
+                                            currentTodo.add(new Event(eventTask, eventTiming));
                                             taskAdded = true;
                                             break addTask;
                                         case EXIT:
@@ -208,6 +236,8 @@ public class doe {
                                     }
                                 }
                                 if (taskAdded) {
+                                    todoManager.saveTodo(currentTodo);
+                                    System.out.println(saved);
                                     System.out.println(banner);
                                     break todoMenu;
                                 }
@@ -216,36 +246,59 @@ public class doe {
                                 System.out.println("____________________________________________________________\n"
                                         + "what you want to remove?\n"
                                         + "____________________________________________________________\n");
-                                String to_remove = scanner.nextLine();
+                                printTodoList(currentTodo);
+                                String removeInput = scanner.nextLine();
                                 int removeIndex = -1;
-                                for (int i = 0; i < TODO.size(); i++) {
-                                    if (TODO.get(i).getDescription().equals(to_remove)) {
-                                        removeIndex = i;
-                                        break;
+                                // Step 1: Try treating the input as an index number
+                                try {
+                                    int taskNumber = Integer.parseInt(removeInput);
+                                    // Check if the number is within the valid list range
+                                    if (taskNumber >= 1 && taskNumber <= currentTodo.size()) {
+                                        removeIndex = taskNumber - 1; // Convert to 0-based index
+                                    }
+                                } catch (NumberFormatException e) {
+                                    // If it throws an exception, the user typed text instead of a number.
+                                    // We catch it and silently move to Step 2.
+                                }
+
+                                // Step 2: If it wasn't a valid number, search for a matching task name
+                                if (removeIndex == -1) {
+                                    for (int i = 0; i < currentTodo.size(); i++) {
+                                        if (currentTodo.get(i).getDescription().equals(removeInput)) {
+                                            removeIndex = i;
+                                            break;
+                                        }
                                     }
                                 }
+
+                                // Step 3: Remove the item if a match was found
                                 if (removeIndex >= 0) {
-                                    TODO.remove(removeIndex);
+                                    currentTodo.remove(removeIndex);
+                                    todoManager.saveTodo(currentTodo);
+                                    System.out.println(removed);
+                                } else {
+                                    printUnexpectedInputMessage("could not find a task with that name or number. please try again.");
                                 }
                                 System.out.println(banner);
                                 break todoMenu;
                             case VIEW:
-                                printTodoList(TODO);
+                                printTodoList(currentTodo);
                                 System.out.println(banner);
                                 break todoMenu;
                             case MARK:
                                 System.out.println("____________________________________________________________");
                                 System.out.println("to mark a task as done, enter its number from the list.");
                                 System.out.println("____________________________________________________________");
-                                printTodoList(TODO);
-                                int markIndex = getTaskIndex(scanner, TODO.size());
+                                printTodoList(currentTodo);
+                                int markIndex = getTaskIndex(scanner, currentTodo.size());
                                 if (markIndex >= 0) {
-                                    TODO.get(markIndex).markAsDone();
+                                    currentTodo.get(markIndex).markAsDone();
                                     System.out.println("____________________________________________________________");
                                     System.out.println("nice! i've marked this task as done:");
-                                    System.out.println("[x] " + TODO.get(markIndex).getDescription());
+                                    System.out.println("[x] " + currentTodo.get(markIndex).getDescription());
                                     System.out.println("____________________________________________________________");
-                                    printTodoList(TODO);
+                                    printTodoList(currentTodo);
+                                    todoManager.saveTodo(currentTodo);
                                     System.out.println(banner);
                                     break todoMenu;
                                 }
@@ -254,15 +307,16 @@ public class doe {
                                 System.out.println("____________________________________________________________");
                                 System.out.println("to mark a task as not done, enter its number from the list.");
                                 System.out.println("____________________________________________________________");
-                                printTodoList(TODO);
-                                int unmarkIndex = getTaskIndex(scanner, TODO.size());
+                                printTodoList(currentTodo);
+                                int unmarkIndex = getTaskIndex(scanner, currentTodo.size());
                                 if (unmarkIndex >= 0) {
-                                    TODO.get(unmarkIndex).markAsNotDone();
+                                    currentTodo.get(unmarkIndex).markAsNotDone();
                                     System.out.println("____________________________________________________________");
                                     System.out.println("ok, i've marked this task as not done yet:");
-                                    System.out.println("[ ] " + TODO.get(unmarkIndex).getDescription());
+                                    System.out.println("[ ] " + currentTodo.get(unmarkIndex).getDescription());
                                     System.out.println("____________________________________________________________");
-                                    printTodoList(TODO);
+                                    printTodoList(currentTodo);
+                                    todoManager.saveTodo(currentTodo);
                                     System.out.println(banner);
                                     break todoMenu;
                                 }
@@ -292,7 +346,7 @@ public class doe {
     /**
      * Prints the Todo items with their current completion status.
      */
-    private static void printTodoList(ArrayList<Task> todoItems) {
+    private static void printTodoList(List<Task> todoItems) {
         System.out.println("____________________________________________________________");
         System.out.println("here are the tasks in your list:");
         for (int i = 0; i < todoItems.size(); i++) {
@@ -335,4 +389,13 @@ public class doe {
         }
     }
 
+    /**
+     * Ensures that "|" is not inputted by user, prevent corruption of .txt file
+     */
+    private static boolean preventCorrupt(String input) {
+        if (input.contains("|")) {
+            printUnexpectedInputMessage("error: input cannot contain '|' character.");
+            return true;
+        } return false;
+    }
 }

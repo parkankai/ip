@@ -7,14 +7,18 @@ public class Deadline extends Task {
     private final String deadline;
 
     /** Creates an incomplete deadline task with its description and deadline note. */
-    public Deadline(String description, String deadline) {
-        super(description);
+    public Deadline(String taskName, String deadline) {
+        super(taskName);
         this.deadline = deadline;
     }
 
+    @Override
+    public String toFileFormat(){
+        return "DEADLINE|"  + super.toFileFormat() + "|" + deadline;
+    }
     /** Returns this deadline in the format used when displaying a task list. */
     @Override
     public String toString() {
-        return "[d][" + getStatusIcon() + "] " + description + " (" + deadline + ")";
+        return "[d][" + getStatusIcon() + "] " + taskName + " (" + deadline + ")";
     }
 }
