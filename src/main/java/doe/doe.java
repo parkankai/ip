@@ -177,7 +177,7 @@ public class doe {
 
                                 int unmarkIndex = ui.getTaskIndex(tasks.size());
                                 if (unmarkIndex >= 0) {
-                                    tasks.getTask(unmarkIndex).markAsDone();
+                                    tasks.getTask(unmarkIndex).markAsNotDone();
                                     System.out.println("____________________________________________________________");
                                     System.out.println("ok i've marked this task as not done yet:");
                                     System.out.println("[] " + tasks.getTask(unmarkIndex).getDescription());

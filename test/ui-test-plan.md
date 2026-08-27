@@ -5,7 +5,7 @@ This file is the source of truth for manual-style console UI regression tests. T
 ## Program command
 
 ```sh
-javac -d out src/main/java/*.java && java -cp out doe
+javac -d out src/main/java/doe/*.java && java -cp out doe.doe
 ```
 
 ## Test case: Exit from the main menu
