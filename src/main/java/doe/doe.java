@@ -11,19 +11,18 @@ public class doe {
     private UserInterface ui;
 
     /**
-     * constructor initialises required chatbot components
+     * Initialises the required chatbot components such as UI, storage, and tasks.
      *
-     * @param filePath
+     * @param filePath The path to the next file used for storing tasks.
      */
     public doe(String filePath) {
         ui = new UserInterface();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
     }
-    // enums defined for each menu, reflected in the switch cases
 
     /**
-     * main logical loop of doe bot
+     * Starts the main logical loop of doe bot to continuously read and execute commands.
      */
     public void run() {
         ui.printBanner(); // starting point
@@ -32,7 +31,7 @@ public class doe {
         while (true) {
             String input = ui.readCommand();
 
-            Parser.MainMenu command = Parser.MainMenu.fromString(input); // parser inteprets input using enums
+            Parser.MainMenu command = Parser.MainMenu.fromString(input); // parser interprets input using enums
             switch (command) {
                 case NEIGH:
                     ui.printNeigh();
@@ -44,19 +43,17 @@ public class doe {
                     ui.printList();
                     break;
                 case TODO:
-                    todoMenu:
-                    // name for todo's menu loop
+                    todoMenu:  // name for todo's menu loop
                     while (true) {
                         ui.printTodoMenu();
-                        String todo_input = ui.readCommand();
-                        Parser.TodoMenu todoInput = Parser.TodoMenu.fromString(todo_input);
+                        String todoInputStr = ui.readCommand();
+                        Parser.TodoMenu todoInput = Parser.TodoMenu.fromString(todoInputStr);
 
                         switch (todoInput) {
                             case ADD:
-                                boolean taskAdded = false;
+                                boolean isTaskAdded = false;
 
-                                addTask:
-                                // loop for adding task
+                                addTask:  // Menu loop for adding task
                                 while (true) {
                                     ui.printAddMenu();
                                     String taskType = ui.readCommand();
@@ -70,7 +67,7 @@ public class doe {
                                                 break;
                                             }
                                             tasks.addTask(new Todo(newInput));
-                                            taskAdded = true;
+                                            isTaskAdded = true;
                                             break addTask;
 
                                         case DEADLINE:
@@ -86,11 +83,12 @@ public class doe {
                                             }
                                             try {
                                                 tasks.addTask(new Deadline(deadlineTask, deadlineDate));
-                                                taskAdded = true;
+                                                isTaskAdded = true;
                                                 break addTask;
                                             } catch (java.time.format.DateTimeParseException e) {
                                                 UserInterface.printUnexpectedInputMessage("\n"
-                                                        + "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).\n");
+                                                        + "invalid date format. please use dd-mm-yyyy "
+                                                        + "(e.g. 17-07-2004 1800).\n");
                                             }
                                             break;
                                         case EVENT:
@@ -106,11 +104,12 @@ public class doe {
                                             }
                                             try {
                                                 tasks.addTask(new Event(eventTask, eventDate));
-                                                taskAdded = true;
+                                                isTaskAdded = true;
                                                 break addTask;
                                             } catch (java.time.format.DateTimeParseException e) {
                                                 UserInterface.printUnexpectedInputMessage("\n"
-                                                        + "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).\n");
+                                                        + "invalid date format. please use dd-mm-yyyy " +
+                                                        "(e.g. 17-07-2004 1800).\n");
                                             }
                                             break;
                                         case EXIT:
@@ -118,11 +117,12 @@ public class doe {
 
                                         case UNKNOWN:
                                             UserInterface.printUnexpectedInputMessage("\n"
-                                                    + "that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.");
+                                                    + "that option is incorrect. " +
+                                                    "please choose 1, 2, 3, todo, deadline, or event.");
                                     }
                                 }
 
-                                if (taskAdded) {
+                                if (isTaskAdded) {
                                     storage.save(tasks.getTasks());
                                     ui.printSaved();
                                     ui.printBanner(); // shows main menu instructions again
@@ -196,6 +196,7 @@ public class doe {
                             case UNKNOWN:
                                 UserInterface.printUnexpectedInputMessage("\n|"
                                         + "that option is incorrect. please choose one of the todo options below.");
+                                break;
                         }
                     }
                     break;
@@ -212,8 +213,9 @@ public class doe {
     }
 
     /***
-     * entry point for doe chatbot
-     * @param args
+     * Starts the doe chatbot application.
+     *
+     * @param args Command line arguments.
      */
 
     public static void main(String[] args) {

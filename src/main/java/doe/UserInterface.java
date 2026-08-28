@@ -9,7 +9,7 @@ public class UserInterface {
     private final Scanner scanner;
 
     // ui banners as previous versions
-    String banner = "____________________________________________________________\n"
+    private static final String BANNER = "____________________________________________________________\n"
             + "     _          \n"
             + "  __| | ___  ___\n"
             + " / _` |/ _ \\ / _ \\\n"
@@ -26,23 +26,23 @@ public class UserInterface {
             + "type \"bye\" to exit\n"
             + "____________________________________________________________\n";
 
-    String neigh = "____________________________________________________________\n"
+    private static final String NEIGH = "____________________________________________________________\n"
             + "eurhggghhhhh!\n"
             + "____________________________________________________________\n";
 
-    String meow = "____________________________________________________________\n"
+    private static final String MEOW = "____________________________________________________________\n"
             + "meow!\n"
             + "____________________________________________________________\n";
 
-    String list = "____________________________________________________________\n"
-            + "roles and responsiblities\n"
+    private static final String LIST = "____________________________________________________________\n"
+            + "roles and responsibilities\n"
             + "1. survive nus cs\n"
             + "2. get a few internships\n"
             + "3. work at mcdonalds\n"
-            + "4. retire as a manager(hopefully)\n"
+            + "4. retire as a manager (hopefully)\n"
             + "____________________________________________________________\n";
 
-    String todo = "____________________________________________________________\n"
+    private static final String TODO_MENU = "____________________________________________________________\n"
             + "modify todo list\n"
             + "1. add\n"
             + "2. remove\n"
@@ -52,19 +52,19 @@ public class UserInterface {
             + "6. exit\n"
             + "____________________________________________________________\n";
 
-    String bye = "____________________________________________________________\n"
+    private static final String BYE = "____________________________________________________________\n"
             + "bye. hope to see you again soon!\n"
             + "____________________________________________________________\n";
 
-    String saved = "____________________________________________________________\n"
+    private static final String SAVED = "____________________________________________________________\n"
             + "item saved successfully!\n"
             + "____________________________________________________________\n";
 
-    String removed = "____________________________________________________________\n"
+    private static final String REMOVED = "____________________________________________________________\n"
             + "item removed successfully!\n"
             + "____________________________________________________________\n";
 
-    String addMenu = "____________________________________________________________\n"
+    private static final String ADD_MENU = "____________________________________________________________\n"
             + "what type of task would you like to add?\n"
             + "1. todo\n"
             + "2. deadline\n"
@@ -72,65 +72,105 @@ public class UserInterface {
             + "4. exit\n"
             + "____________________________________________________________\n";
 
-    String addPrompt = "____________________________________________________________\n"
+    private static final String ADD_PROMPT = "____________________________________________________________\n"
             + "what you want to add?\n"
             + "____________________________________________________________\n";
 
-    String removePrompt = "____________________________________________________________\n"
+    private static final String REMOVE_PROMPT = "____________________________________________________________\n"
             + "what you want to remove?\n"
             + "____________________________________________________________\n";
 
-    String deadlineDate = "____________________________________________________________\n"
+    private static final String DEADLINE_DATE = "____________________________________________________________\n"
             + "input deadline in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1800):\n"
             + "____________________________________________________________\n";
 
-    String eventDate = "____________________________________________________________\n"
+    private static final String EVENT_DATE = "____________________________________________________________\n"
             + "input event time in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1100):\n"
             + "____________________________________________________________\n";
 
-    String markDone = "____________________________________________________________\n"
+    private static final String MARK_DONE = "____________________________________________________________\n"
             + "to mark a task as done, enter its number from the list.\n"
             + "____________________________________________________________";
 
-    String markUndone = "____________________________________________________________\n"
+    private static final String MARK_UNDONE = "____________________________________________________________\n"
             + "to mark a task as not done, enter its number from the list.\n"
             + "____________________________________________________________";
 
-    String invalidDate = "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).\n";
+    private static final String INVALID_DATE = "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).\n";
 
-    String invalidAddSelection = "that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.";
+    private static final String INVALID_ADD_SELECTION =
+            "that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.";
 
+    /**
+     * Initializes the UserInterface by opening a new Scanner for system input.
+     */
     public UserInterface() {
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Reads the next line of input from the user.
+     *
+     * @return The user's input string.
+     */
     public String readCommand() {
         return scanner.nextLine();
     }
 
     // collection of printing functions for ease of showing ui
 
-    public void printBanner() { System.out.println(banner); }
-    public void printNeigh() { System.out.println(neigh); }
-    public void printMeow() { System.out.println(meow); }
-    public void printList() { System.out.println(list); }
-    public void printTodoMenu() { System.out.println(todo); }
-    public void printAddMenu() { System.out.println(addMenu); }
-    public void printAddPrompt() { System.out.println(addPrompt); }
-    public void printRemovePrompt() { System.out.println(removePrompt); }
-    public void printDeadlineDate() { System.out.println(deadlineDate); }
-    public void printEventDate() { System.out.println(eventDate); }
-    public void printMarkPrompt() { System.out.println(markDone); }
-    public void printUnmarkPrompt() { System.out.println(markUndone); }
-    public void printInvalidDate() { System.out.println(invalidDate); }
-    public void printInvalidAddSelection() { System.out.println(invalidAddSelection); }
-    public void printBye() { System.out.println(bye); }
-    public void printSaved() { System.out.println(saved); }
-    public void printRemoved() { System.out.println(removed); }
+    /** Prints the main welcome banner to the terminal. */
+    public void printBanner() { System.out.println(BANNER); }
+
+    /** Prints a neigh sound to the terminal. */
+    public void printNeigh() { System.out.println(NEIGH); }
+
+    /** Prints a meow sound to the terminal. */
+    public void printMeow() { System.out.println(MEOW); }
+
+    /** Prints a static list of roles to the terminal. */
+    public void printList() { System.out.println(LIST); }
+
+    /** Prints the todo list management menu to the terminal. */
+    public void printTodoMenu() { System.out.println(TODO_MENU); }
+
+    /** Prints the add task menu to the terminal. */
+    public void printAddMenu() { System.out.println(ADD_MENU); }
+
+    /** Prints a prompt asking the user what task they want to add. */
+    public void printAddPrompt() { System.out.println(ADD_PROMPT); }
+
+    /** Prints a prompt asking the user what task they want to remove. */
+    public void printRemovePrompt() { System.out.println(REMOVE_PROMPT); }
+
+    /** Prints a prompt asking the user to input a deadline date. */
+    public void printDeadlineDate() { System.out.println(DEADLINE_DATE); }
+
+    /** Prints a prompt asking the user to input an event date. */
+    public void printEventDate() { System.out.println(EVENT_DATE); }
+
+    /** Prints a prompt for marking a task as done. */
+    public void printMarkPrompt() { System.out.println(MARK_DONE); }
+
+    /** Prints a prompt for marking a task as not done. */
+    public void printUnmarkPrompt() { System.out.println(MARK_UNDONE); }
+
+    /** Prints a farewell message to the user. */
+    public void printBye() { System.out.println(BYE); }
+
+    /** Prints a confirmation that an item was saved successfully. */
+    public void printSaved() { System.out.println(SAVED); }
+
+    /** Prints a confirmation that an item was removed successfully. */
+    public void printRemoved() { System.out.println(REMOVED); }
+
+    /** Closes the scanner to free up system resources. */
     public void closeScanner() { scanner.close(); }
 
     /**
-     *prints the todo list as specified
+     * Prints the provided list of todo items with numerical formatting.
+     *
+     * @param todoItems The list of tasks to be printed.
      */
     public void printTodoList(List<Task> todoItems) {
         System.out.println("____________________________________________________________");
@@ -143,9 +183,12 @@ public class UserInterface {
     }
 
     /**
-     * reads task number and returns zero-based index for user convenience, returns -1 when invalid
+     * Reads the task number from the user and returns the zero-based index.
+     * Returns -1 when the input is invalid or out of bounds.
+     *
+     * @param numberOfTasks The current total count of tasks available.
+     * @return The zero-based integer index of the selected task, or -1 if invalid.
      */
-
     public int getTaskIndex(int numberOfTasks) {
         if (numberOfTasks == 0) {
             System.out.println("there are no tasks to mark yet. add a task first.");
@@ -167,6 +210,8 @@ public class UserInterface {
 
     /**
      * Displays an existing invalid-input message through the application's input exception.
+     *
+     * @param message The detailed string message highlighting the unexpected input.
      */
     public static void printUnexpectedInputMessage(String message) {
         try {
@@ -177,13 +222,17 @@ public class UserInterface {
     }
 
     /**
-     * Ensures that "|" is not inputted by user, prevent corruption of .txt file
+     * Ensures that the "|" delimiter is not inputted by the user to prevent corruption of the .txt storage file.
+     *
+     * @param input The text string to evaluate.
+     * @return True if the string contains "|", false otherwise.
      */
     public static boolean preventCorrupt(String input) {
         if (input.contains("|")) {
             printUnexpectedInputMessage("error: input cannot contain '|' character.");
             return true;
-        } return false;
+        }
+        return false;
     }
 
 }
