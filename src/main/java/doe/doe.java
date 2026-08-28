@@ -217,7 +217,6 @@ public class doe {
      *
      * @param args Command line arguments.
      */
-
     public static void main(String[] args) {
         // initialises doe with target file and starts the main loop
         new doe("todo.txt").run();
