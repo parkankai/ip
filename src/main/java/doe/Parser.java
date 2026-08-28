@@ -5,10 +5,18 @@ package doe;
  * Deals with making sense of the user command and inputs.
  */
 public class Parser {
-
+    /**
+     * Represents the available commands in the main menu.
+     */
     public enum MainMenu {
         NEIGH, MEOW, LIST, TODO, BYE, UNKNOWN;
 
+        /**
+         * Parses a string input into a MainMenu enum value.
+         *
+         * @param input The user input string to parse.
+         * @return The corresponding MainMenu value, or UNKNOWN if value is invalid
+         */
         public static MainMenu fromString(String input) {
             switch (input.toLowerCase().trim()) {
                 case "1":
@@ -31,9 +39,18 @@ public class Parser {
         }
     }
 
+    /**
+     * Represents the available commands in the todo menu.
+     */
     public enum TodoMenu {
         ADD, REMOVE, VIEW, MARK, UNMARK, EXIT, UNKNOWN;
 
+        /**
+         * Parses a string input into a TodoMenu enum value.
+         *
+         * @param input The user input string to parse.
+         * @return The corresponding TodoMenu value, or UNKNOWN if value is invalid
+         */
         public static TodoMenu fromString(String input) {
             switch (input.toLowerCase().trim()) {
                 case "1":
@@ -60,9 +77,18 @@ public class Parser {
         }
     }
 
+    /**
+     * Represents the available commands in the todo menu.
+     */
     public enum TaskMenu {
         TODO, DEADLINE, EVENT, EXIT, UNKNOWN;
 
+        /**
+         * Parses a string input into a TaskMenu enum value.
+         *
+         * @param input The user input string to parse.
+         * @return The corresponding TaskMenu value, or UNKNOWN if value is invalid
+         */
         public static TaskMenu fromString(String input) {
             switch (input.toLowerCase().trim()) {
                 case "1":

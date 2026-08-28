@@ -6,7 +6,11 @@ package doe;
  */
 public class UnexpectedInputException extends Exception {
 
-    /** Creates an exception containing the existing user-facing error message. */
+    /**
+     * Creates an exception containing the existing user-facing error message.
+     *
+     * @param message The detailed error message shown to the user.
+     */
     public UnexpectedInputException(String message) {
         super(message);
     }

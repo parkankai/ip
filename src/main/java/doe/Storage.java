@@ -13,12 +13,20 @@ import java.util.List;
 public class Storage {
     private final Path filePath;
 
-    /** Sets the file path location for storage. */
+    /**
+     * Creates a new Storage instance initialised with specific file path.
+     *
+     * @param filePath The file path location for storage.
+     */
     public Storage(String filePath) {
         this.filePath = Path.of(filePath);
     }
 
-    /** Loads tasks from the text file, parsing each line back into Task objects. */
+    /**
+     * Loads tasks from the text file, parsing each line back into Task objects.
+     *
+     * @return A list of tasks retrieved from the storage file.
+     */
     public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(filePath)) {
@@ -62,7 +70,11 @@ public class Storage {
         return tasks;
     }
 
-    /** Saves the current list of tasks to the text file format. */
+    /**
+     * Saves the current list of tasks to the text file format.
+     *
+     * @param currentTasks The list of tasks to be saved in storage.
+     */
     public void save(List<Task> currentTasks) {
         List<String> lines = new ArrayList<>();
         for (Task task : currentTasks) {
