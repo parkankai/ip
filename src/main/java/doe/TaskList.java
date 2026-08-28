@@ -2,6 +2,7 @@ package doe;
 
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Contains the task list; has operations to add/delete/modify tasks in the list.
@@ -93,5 +94,22 @@ public class TaskList {
             }
         }
         return removeIndex;
+    }
+
+    /**
+     * Finds and returns a list of tasks that contain the given keyword in their description.
+     *
+     * @param keyword The search term.
+     * @return A list of matching Task objects.
+     */
+    public List<Task> findTasks(String keyword) {
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            // Case-insensitive search
+            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 }

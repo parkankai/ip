@@ -49,7 +49,8 @@ public class UserInterface {
             + "3. view\n"
             + "4. mark\n"
             + "5. unmark\n"
-            + "6. exit\n"
+            + "6. find\n"
+            + "7. exit\n"
             + "____________________________________________________________\n";
 
     private static final String BYE = "____________________________________________________________\n"
@@ -100,6 +101,10 @@ public class UserInterface {
 
     private static final String INVALID_ADD_SELECTION =
             "that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.";
+
+    private static final String FIND_PROMPT = "____________________________________________________________\n"
+            + "enter a keyword to search for:\n"
+            + "____________________________________________________________\n";
 
     /**
      * Initializes the UserInterface by opening a new Scanner for system input.
@@ -166,6 +171,9 @@ public class UserInterface {
 
     /** Closes the scanner to free up system resources. */
     public void closeScanner() { scanner.close(); }
+
+    /** Prints the find menu prompt */
+    public void printFindPrompt() { System.out.println(FIND_PROMPT); }
 
     /**
      * Prints the provided list of todo items with numerical formatting.
@@ -235,6 +243,23 @@ public class UserInterface {
         return false;
     }
 
+    /**
+     * Displays menu for find option.
+     *
+     * @param matchingTasks List of tasks that is found suitable.
+     */
+    public void printMatchingTasks(List<Task> matchingTasks) {
+        System.out.println("____________________________________________________________");
+        if (matchingTasks.isEmpty()) {
+            System.out.println("no matching tasks found.");
+        } else {
+            System.out.println("Here are the matching tasks in your list:");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTasks.get(i));
+            }
+        }
+        System.out.println("____________________________________________________________");
+    }
 }
 
 
