@@ -189,6 +189,13 @@ public class doe {
                                 }
                                 break;
 
+                            case FIND:
+                                ui.printFindPrompt();
+                                String keyword = ui.readCommand();
+                                ui.printMatchingTasks(tasks.findTasks(keyword));
+                                ui.printBanner();
+                                break todoMenu;
+
                             case EXIT:
                                 ui.printBanner();
                                 break todoMenu;
@@ -200,7 +207,6 @@ public class doe {
                         }
                     }
                     break;
-
                 case BYE:
                     ui.printBye();
                     ui.closeScanner();
