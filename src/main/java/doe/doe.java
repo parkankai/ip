@@ -43,7 +43,7 @@ public class doe {
                     ui.printList();
                     break;
                 case TODO:
-                    todoMenu:  // name for todo's menu loop
+                    todoMenu: //name for todo's menu loop
                     while (true) {
                         ui.printTodoMenu();
                         String todoInputStr = ui.readCommand();
@@ -53,7 +53,7 @@ public class doe {
                             case ADD:
                                 boolean isTaskAdded = false;
 
-                                addTask:  // Menu loop for adding task
+                                addTask: // Menu loop for adding task
                                 while (true) {
                                     ui.printAddMenu();
                                     String taskType = ui.readCommand();
@@ -108,8 +108,8 @@ public class doe {
                                                 break addTask;
                                             } catch (java.time.format.DateTimeParseException e) {
                                                 UserInterface.printUnexpectedInputMessage("\n"
-                                                        + "invalid date format. please use dd-mm-yyyy " +
-                                                        "(e.g. 17-07-2004 1800).\n");
+                                                        + "invalid date format. please use dd-mm-yyyy "
+                                                        + "(e.g. 17-07-2004 1800).\n");
                                             }
                                             break;
                                         case EXIT:
@@ -117,8 +117,8 @@ public class doe {
 
                                         case UNKNOWN:
                                             UserInterface.printUnexpectedInputMessage("\n"
-                                                    + "that option is incorrect. " +
-                                                    "please choose 1, 2, 3, todo, deadline, or event.");
+                                                    + "that option is incorrect. "
+                                                    + "please choose 1, 2, 3, todo, deadline, or event.");
                                     }
                                 }
 

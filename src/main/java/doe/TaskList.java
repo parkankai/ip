@@ -1,8 +1,7 @@
 package doe;
 
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contains the task list; has operations to add/delete/modify tasks in the list.

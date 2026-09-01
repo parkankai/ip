@@ -1,10 +1,5 @@
 package doe;
 
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-
 /**
  * Represents a Todo item and whether it has been completed.
  */
@@ -60,7 +55,7 @@ public class Task {
      * @return File-formatted string detailing task completion status and description.
      */
     public String toFileFormat() {
-        return String.valueOf(isDone) + "|" + taskName;
+        return isDone + "|" + taskName;
     }
 
     /**

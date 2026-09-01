@@ -1,12 +1,13 @@
 package doe;
 
-
-import java.awt.*;
-import java.util.Scanner;
 import java.util.List;
+import java.util.Scanner;
 
+/**
+ * Contains parse, print and other checks.
+ * Main interface to communiate with the user.
+ */
 public class UserInterface {
-    private final Scanner scanner;
 
     // ui banners as previous versions
     private static final String BANNER = "____________________________________________________________\n"
@@ -105,6 +106,8 @@ public class UserInterface {
     private static final String FIND_PROMPT = "____________________________________________________________\n"
             + "enter a keyword to search for:\n"
             + "____________________________________________________________\n";
+
+    private final Scanner scanner;
 
     /**
      * Initializes the UserInterface by opening a new Scanner for system input.
