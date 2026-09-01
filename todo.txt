@@ -2,3 +2,5 @@ TODO|true|journal
 TODO|false|journal
 DEADLINE|false|level 8|26-08-2026 2359
 EVENT|true|cycle|09-09-2026 1900
+TODO|false|journal
+TODO|false|read
