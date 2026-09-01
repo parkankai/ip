@@ -42,7 +42,31 @@ test {
 }
 
 application {
-    mainClass = 'doe.doe'
+    mainClass = 'doe.Launcher'
+    applicationDefaultJvmArgs = ['--enable-native-access=javafx.graphics']
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+dependencies {
+    String javaFxVersion = '17.0.7'
+
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:linux")
 }
 
 jar {
@@ -57,5 +81,13 @@ shadowJar {
 }
 
 run {
+    standardInput = System.in
+}
+
+tasks.register('runConsole', JavaExec) {
+    group = 'application'
+    description = 'Runs the original console interface.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'doe.doe'
     standardInput = System.in
 }

@@ -1,14 +1,24 @@
 package doe;
 
+import java.time.format.DateTimeParseException;
+import java.util.List;
+
 
 /**
  * Entry point for the doe chatbot application.
  */
 
 public class doe {
+    private enum GuiState {
+        MAIN, TODO_MENU, ADD_TYPE, ADD_DESCRIPTION, ADD_DATE, REMOVE, MARK, UNMARK, FIND
+    }
+
     private Storage storage;
     private TaskList tasks;
     private UserInterface ui;
+    private GuiState guiState = GuiState.MAIN;
+    private Parser.TaskMenu pendingTaskType;
+    private String pendingDescription;
 
     /**
      * Initialises the required chatbot components such as UI, storage, and tasks.
@@ -19,6 +29,228 @@ public class doe {
         ui = new UserInterface();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
+    }
+
+    /**
+     * Returns the first message shown when the graphical interface opens.
+     *
+     * @return Doe's greeting and the available main-menu commands.
+     */
+    public String getWelcomeMessage() {
+        return "hello! i'm doe :).\nwhat can i do for you?\n"
+                + "1. neigh\n2. meow\n3. list\n4. todo\n\ntype \"bye\" to exit";
+    }
+
+    /**
+     * Processes one GUI submission while retaining the same multi-step menus as the console interface.
+     * The GUI controller only presents this returned text; task parsing, mutation, and storage remain here.
+     *
+     * @param input One line submitted in the graphical interface.
+     * @return Doe's response and, when needed, the next prompt.
+     */
+    public String getResponse(String input) {
+        String cleanedInput = input.trim();
+        switch (guiState) {
+            case MAIN:
+                return respondToMainMenu(cleanedInput);
+            case TODO_MENU:
+                return respondToTodoMenu(cleanedInput);
+            case ADD_TYPE:
+                return respondToAddType(cleanedInput);
+            case ADD_DESCRIPTION:
+                return acceptTaskDescription(cleanedInput);
+            case ADD_DATE:
+                return acceptTaskDate(cleanedInput);
+            case REMOVE:
+                return removeTask(cleanedInput);
+            case MARK:
+                return changeTaskStatus(cleanedInput, true);
+            case UNMARK:
+                return changeTaskStatus(cleanedInput, false);
+            case FIND:
+                guiState = GuiState.MAIN;
+                return matchingTasksText(tasks.findTasks(cleanedInput)) + "\n\n" + getWelcomeMessage();
+            default:
+                throw new IllegalStateException("Unknown GUI state: " + guiState);
+        }
+    }
+
+    private String respondToMainMenu(String input) {
+        switch (Parser.MainMenu.fromString(input)) {
+            case NEIGH:
+                return "eurhggghhhhh!";
+            case MEOW:
+                return "meow!";
+            case LIST:
+                return "roles and responsibilities\n1. survive nus cs\n2. get a few internships\n"
+                        + "3. work at mcdonalds\n4. retire as a manager (hopefully)";
+            case TODO:
+                guiState = GuiState.TODO_MENU;
+                return todoMenuText();
+            case BYE:
+                return "bye. hope to see you again soon!";
+            case UNKNOWN:
+            default:
+                return "horh\n\n" + getWelcomeMessage();
+        }
+    }
+
+    private String respondToTodoMenu(String input) {
+        switch (Parser.TodoMenu.fromString(input)) {
+            case ADD:
+                guiState = GuiState.ADD_TYPE;
+                return "what type of task would you like to add?\n1. todo\n2. deadline\n3. event\n4. exit";
+            case REMOVE:
+                guiState = GuiState.REMOVE;
+                return "what you want to remove?\n\n" + taskListText(tasks.getTasks());
+            case VIEW:
+                guiState = GuiState.MAIN;
+                return taskListText(tasks.getTasks()) + "\n\n" + getWelcomeMessage();
+            case MARK:
+                guiState = GuiState.MARK;
+                return "to mark a task as done, enter its number from the list.\n\n"
+                        + taskListText(tasks.getTasks());
+            case UNMARK:
+                guiState = GuiState.UNMARK;
+                return "to mark a task as not done, enter its number from the list.\n\n"
+                        + taskListText(tasks.getTasks());
+            case FIND:
+                guiState = GuiState.FIND;
+                return "enter a keyword to search for:";
+            case EXIT:
+                guiState = GuiState.MAIN;
+                return getWelcomeMessage();
+            case UNKNOWN:
+            default:
+                return "that option is incorrect. please choose one of the todo options below.\n\n" + todoMenuText();
+        }
+    }
+
+    private String respondToAddType(String input) {
+        pendingTaskType = Parser.TaskMenu.fromString(input);
+        switch (pendingTaskType) {
+            case TODO:
+            case DEADLINE:
+            case EVENT:
+                guiState = GuiState.ADD_DESCRIPTION;
+                return "what you want to add?";
+            case EXIT:
+                guiState = GuiState.TODO_MENU;
+                return todoMenuText();
+            case UNKNOWN:
+            default:
+                return "that option is incorrect. please choose 1, 2, 3, todo, deadline, or event.";
+        }
+    }
+
+    private String acceptTaskDescription(String input) {
+        if (containsStorageDelimiter(input)) {
+            return "error: input cannot contain '|' character.\n\nwhat you want to add?";
+        }
+        pendingDescription = input;
+        if (pendingTaskType == Parser.TaskMenu.TODO) {
+            tasks.addTask(new Todo(pendingDescription));
+            return finishAddingTask();
+        }
+
+        guiState = GuiState.ADD_DATE;
+        if (pendingTaskType == Parser.TaskMenu.DEADLINE) {
+            return "input deadline in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1800):";
+        }
+        return "input event time in format dd-mm-yyyy hhmm (e.g. 17-07-2004 1100):";
+    }
+
+    private String acceptTaskDate(String input) {
+        if (containsStorageDelimiter(input)) {
+            return "error: input cannot contain '|' character.";
+        }
+        try {
+            if (pendingTaskType == Parser.TaskMenu.DEADLINE) {
+                tasks.addTask(new Deadline(pendingDescription, input));
+            } else {
+                tasks.addTask(new Event(pendingDescription, input));
+            }
+            return finishAddingTask();
+        } catch (DateTimeParseException exception) {
+            return "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).";
+        }
+    }
+
+    private String finishAddingTask() {
+        storage.save(tasks.getTasks());
+        guiState = GuiState.MAIN;
+        pendingTaskType = null;
+        pendingDescription = null;
+        return "item saved successfully!\n\n" + getWelcomeMessage();
+    }
+
+    private String removeTask(String input) {
+        int index = tasks.findTaskIndex(input);
+        guiState = GuiState.MAIN;
+        if (index < 0) {
+            return "could not find a task with that name or number. please try again.\n\n"
+                    + getWelcomeMessage();
+        }
+        Task removedTask = tasks.removeTask(index);
+        storage.save(tasks.getTasks());
+        return "item removed successfully!\n" + removedTask + "\n\n" + getWelcomeMessage();
+    }
+
+    private String changeTaskStatus(String input, boolean markAsDone) {
+        guiState = GuiState.MAIN;
+        if (tasks.size() == 0) {
+            return "there are no tasks to mark yet. add a task first.\n\n" + getWelcomeMessage();
+        }
+
+        int index;
+        try {
+            index = Integer.parseInt(input) - 1;
+        } catch (NumberFormatException exception) {
+            index = -1;
+        }
+        if (index < 0 || index >= tasks.size()) {
+            return "that task number is incorrect. please enter a number from 1 to " + tasks.size()
+                    + ".\n\n" + getWelcomeMessage();
+        }
+
+        Task task = tasks.getTask(index);
+        if (markAsDone) {
+            task.markAsDone();
+        } else {
+            task.markAsNotDone();
+        }
+        storage.save(tasks.getTasks());
+        String message = markAsDone ? "nice! i've marked this task as done:\n[x] "
+                : "ok i've marked this task as not done yet:\n[] ";
+        return message + task.getDescription() + "\n\n" + taskListText(tasks.getTasks())
+                + "\n\n" + getWelcomeMessage();
+    }
+
+    private static boolean containsStorageDelimiter(String input) {
+        return input.contains("|");
+    }
+
+    private static String todoMenuText() {
+        return "modify todo list\n1. add\n2. remove\n3. view\n4. mark\n5. unmark\n6. find\n7. exit";
+    }
+
+    private static String taskListText(List<Task> taskItems) {
+        StringBuilder result = new StringBuilder("here are the tasks in your list:");
+        for (int i = 0; i < taskItems.size(); i++) {
+            result.append('\n').append(i + 1).append(". ").append(taskItems.get(i));
+        }
+        return result.toString();
+    }
+
+    private static String matchingTasksText(List<Task> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            return "no matching tasks found.";
+        }
+        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            result.append('\n').append(i + 1).append(". ").append(matchingTasks.get(i));
+        }
+        return result.toString();
     }
 
     /**
