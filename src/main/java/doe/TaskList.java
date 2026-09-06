@@ -1,6 +1,5 @@
 package doe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -110,13 +109,9 @@ public class TaskList {
      */
     public List<Task> findTasks(String keyword) {
         assert keyword != null : "A search keyword must have been read before searching";
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            // Case-insensitive search
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        String lowercaseKeyword = keyword.toLowerCase();
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(lowercaseKeyword))
+                .toList();
     }
 }
