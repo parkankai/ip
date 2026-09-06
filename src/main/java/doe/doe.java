@@ -275,169 +275,7 @@ public class doe {
                     ui.printList();
                     break;
                 case TODO:
-                    todoMenu: //name for todo's menu loop
-                    while (true) {
-                        ui.printTodoMenu();
-                        String todoInputStr = ui.readCommand();
-                        Parser.TodoMenu todoInput = Parser.TodoMenu.fromString(todoInputStr);
-
-                        switch (todoInput) {
-                            case ADD:
-                                boolean isTaskAdded = false;
-
-                                addTask: // Menu loop for adding task
-                                while (true) {
-                                    ui.printAddMenu();
-                                    String taskType = ui.readCommand();
-                                    Parser.TaskMenu type = Parser.TaskMenu.fromString(taskType);
-
-                                    switch (type) {
-                                        case TODO:
-                                            ui.printAddPrompt();
-                                            String newInput = ui.readCommand();
-                                            if (UserInterface.preventCorrupt(newInput)) {
-                                                break;
-                                            }
-                                            tasks.addTask(new Todo(newInput));
-                                            isTaskAdded = true;
-                                            break addTask;
-
-                                        case DEADLINE:
-                                            ui.printAddPrompt();
-                                            String deadlineTask = ui.readCommand();
-                                            if (UserInterface.preventCorrupt(deadlineTask)) {
-                                                break;
-                                            }
-                                            ui.printDeadlineDate();
-                                            String deadlineDate = ui.readCommand();
-                                            if (UserInterface.preventCorrupt(deadlineDate)) {
-                                                break;
-                                            }
-                                            try {
-                                                tasks.addTask(new Deadline(deadlineTask, deadlineDate));
-                                                isTaskAdded = true;
-                                                break addTask;
-                                            } catch (java.time.format.DateTimeParseException e) {
-                                                UserInterface.printUnexpectedInputMessage("\n"
-                                                        + "invalid date format. please use dd-mm-yyyy "
-                                                        + "(e.g. 17-07-2004 1800).\n");
-                                            }
-                                            break;
-                                        case EVENT:
-                                            ui.printAddPrompt();
-                                            String eventTask = ui.readCommand();
-                                            if (UserInterface.preventCorrupt(eventTask)) {
-                                                break;
-                                            }
-                                            ui.printEventDate();
-                                            String eventDate = ui.readCommand();
-                                            if (UserInterface.preventCorrupt(eventDate)) {
-                                                break;
-                                            }
-                                            try {
-                                                tasks.addTask(new Event(eventTask, eventDate));
-                                                isTaskAdded = true;
-                                                break addTask;
-                                            } catch (java.time.format.DateTimeParseException e) {
-                                                UserInterface.printUnexpectedInputMessage("\n"
-                                                        + "invalid date format. please use dd-mm-yyyy "
-                                                        + "(e.g. 17-07-2004 1800).\n");
-                                            }
-                                            break;
-                                        case EXIT:
-                                            break addTask;
-
-                                        case UNKNOWN:
-                                            UserInterface.printUnexpectedInputMessage("\n"
-                                                    + "that option is incorrect. "
-                                                    + "please choose 1, 2, 3, todo, deadline, or event.");
-                                    }
-                                }
-
-                                if (isTaskAdded) {
-                                    storage.save(tasks.getTasks());
-                                    ui.printSaved();
-                                    ui.printBanner(); // shows main menu instructions again
-                                    break todoMenu; // returns to main menu banner
-                                }
-                                break;
-
-                            case REMOVE:
-                                ui.printRemovePrompt();
-                                ui.printTodoList(tasks.getTasks());
-                                String removeInput = ui.readCommand();
-
-                                int removeIndex = tasks.findTaskIndex(removeInput); // find index
-
-                                if (removeIndex >= 0) {
-                                    tasks.removeTask(removeIndex);
-                                    storage.save(tasks.getTasks());
-                                    ui.printRemoved();
-                                } else {
-                                    UserInterface.printUnexpectedInputMessage(
-                                            "could not find a task with that name or number. please try again.");
-                                }
-                                ui.printBanner();
-                                break todoMenu;
-
-                            case VIEW:
-                                ui.printTodoList(tasks.getTasks());
-                                ui.printBanner();
-                                break todoMenu;
-
-                            case MARK:
-                                ui.printMarkPrompt();
-                                ui.printTodoList(tasks.getTasks());
-
-                                int markIndex = ui.getTaskIndex(tasks.size());
-                                if (markIndex >= 0) {
-                                    tasks.getTask(markIndex).markAsDone();
-                                    System.out.println("____________________________________________________________");
-                                    System.out.println("nice! i've marked this task as done:");
-                                    System.out.println("[x] " + tasks.getTask(markIndex).getDescription());
-                                    System.out.println("____________________________________________________________");
-                                    ui.printTodoList(tasks.getTasks());
-                                    storage.save(tasks.getTasks());
-                                    ui.printBanner();
-                                    break todoMenu;
-                                }
-                                break;
-
-                            case UNMARK:
-                                ui.printUnmarkPrompt();
-                                ui.printTodoList(tasks.getTasks());
-
-                                int unmarkIndex = ui.getTaskIndex(tasks.size());
-                                if (unmarkIndex >= 0) {
-                                    tasks.getTask(unmarkIndex).markAsNotDone();
-                                    System.out.println("____________________________________________________________");
-                                    System.out.println("ok i've marked this task as not done yet:");
-                                    System.out.println("[] " + tasks.getTask(unmarkIndex).getDescription());
-                                    System.out.println("____________________________________________________________");
-                                    ui.printTodoList(tasks.getTasks());
-                                    storage.save(tasks.getTasks());
-                                    ui.printBanner();
-                                    break todoMenu;
-                                }
-                                break;
-
-                            case FIND:
-                                ui.printFindPrompt();
-                                String keyword = ui.readCommand();
-                                ui.printMatchingTasks(tasks.findTasks(keyword));
-                                ui.printBanner();
-                                break todoMenu;
-
-                            case EXIT:
-                                ui.printBanner();
-                                break todoMenu;
-
-                            case UNKNOWN:
-                                UserInterface.printUnexpectedInputMessage("\n|"
-                                        + "that option is incorrect. please choose one of the todo options below.");
-                                break;
-                        }
-                    }
+                    runTodoMenu();
                     break;
                 case BYE:
                     ui.printBye();
@@ -448,6 +286,190 @@ public class doe {
                     UserInterface.printUnexpectedInputMessage("horh");
             }
         }
+    }
+
+    /**
+     * Runs the console todo menu until an action returns the user to the main menu.
+     */
+    private void runTodoMenu() {
+        while (true) {
+            ui.printTodoMenu();
+            Parser.TodoMenu command = Parser.TodoMenu.fromString(ui.readCommand());
+
+            switch (command) {
+                case ADD:
+                    if (addTaskFromConsole()) {
+                        saveTasksAndReturnToMainMenu();
+                        return;
+                    }
+                    break;
+                case REMOVE:
+                    removeTaskFromConsole();
+                    return;
+                case VIEW:
+                    ui.printTodoList(tasks.getTasks());
+                    ui.printBanner();
+                    return;
+                case MARK:
+                    if (changeTaskStatusFromConsole(true)) {
+                        return;
+                    }
+                    break;
+                case UNMARK:
+                    if (changeTaskStatusFromConsole(false)) {
+                        return;
+                    }
+                    break;
+                case FIND:
+                    findTasksFromConsole();
+                    return;
+                case EXIT:
+                    ui.printBanner();
+                    return;
+                case UNKNOWN:
+                    UserInterface.printUnexpectedInputMessage("\n|"
+                            + "that option is incorrect. please choose one of the todo options below.");
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown todo menu command: " + command);
+            }
+        }
+    }
+
+    /**
+     * Reads task details from the console and adds a valid task.
+     *
+     * @return true if a task was added, or false if the user exited the add menu
+     */
+    private boolean addTaskFromConsole() {
+        while (true) {
+            ui.printAddMenu();
+            Parser.TaskMenu type = Parser.TaskMenu.fromString(ui.readCommand());
+
+            switch (type) {
+                case TODO:
+                    if (addTodoFromConsole()) {
+                        return true;
+                    }
+                    break;
+                case DEADLINE:
+                case EVENT:
+                    if (addDatedTaskFromConsole(type)) {
+                        return true;
+                    }
+                    break;
+                case EXIT:
+                    return false;
+                case UNKNOWN:
+                    UserInterface.printUnexpectedInputMessage("\n"
+                            + "that option is incorrect. "
+                            + "please choose 1, 2, 3, todo, deadline, or event.");
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown task menu command: " + type);
+            }
+        }
+    }
+
+    private boolean addTodoFromConsole() {
+        ui.printAddPrompt();
+        String description = ui.readCommand();
+        if (UserInterface.preventCorrupt(description)) {
+            return false;
+        }
+        tasks.addTask(new Todo(description));
+        return true;
+    }
+
+    private boolean addDatedTaskFromConsole(Parser.TaskMenu type) {
+        ui.printAddPrompt();
+        String description = ui.readCommand();
+        if (UserInterface.preventCorrupt(description)) {
+            return false;
+        }
+
+        if (type == Parser.TaskMenu.DEADLINE) {
+            ui.printDeadlineDate();
+        } else {
+            ui.printEventDate();
+        }
+        String date = ui.readCommand();
+        if (UserInterface.preventCorrupt(date)) {
+            return false;
+        }
+
+        try {
+            Task task = type == Parser.TaskMenu.DEADLINE
+                    ? new Deadline(description, date)
+                    : new Event(description, date);
+            tasks.addTask(task);
+            return true;
+        } catch (DateTimeParseException exception) {
+            UserInterface.printUnexpectedInputMessage("\n"
+                    + "invalid date format. please use dd-mm-yyyy "
+                    + "(e.g. 17-07-2004 1800).\n");
+            return false;
+        }
+    }
+
+    private void removeTaskFromConsole() {
+        ui.printRemovePrompt();
+        ui.printTodoList(tasks.getTasks());
+        int index = tasks.findTaskIndex(ui.readCommand());
+
+        if (index >= 0) {
+            tasks.removeTask(index);
+            storage.save(tasks.getTasks());
+            ui.printRemoved();
+        } else {
+            UserInterface.printUnexpectedInputMessage(
+                    "could not find a task with that name or number. please try again.");
+        }
+        ui.printBanner();
+    }
+
+    private boolean changeTaskStatusFromConsole(boolean markAsDone) {
+        if (markAsDone) {
+            ui.printMarkPrompt();
+        } else {
+            ui.printUnmarkPrompt();
+        }
+        ui.printTodoList(tasks.getTasks());
+
+        int index = ui.getTaskIndex(tasks.size());
+        if (index < 0) {
+            return false;
+        }
+
+        Task task = tasks.getTask(index);
+        if (markAsDone) {
+            task.markAsDone();
+            System.out.println("____________________________________________________________");
+            System.out.println("nice! i've marked this task as done:");
+            System.out.println("[x] " + task.getDescription());
+        } else {
+            task.markAsNotDone();
+            System.out.println("____________________________________________________________");
+            System.out.println("ok i've marked this task as not done yet:");
+            System.out.println("[] " + task.getDescription());
+        }
+        System.out.println("____________________________________________________________");
+        ui.printTodoList(tasks.getTasks());
+        storage.save(tasks.getTasks());
+        ui.printBanner();
+        return true;
+    }
+
+    private void findTasksFromConsole() {
+        ui.printFindPrompt();
+        ui.printMatchingTasks(tasks.findTasks(ui.readCommand()));
+        ui.printBanner();
+    }
+
+    private void saveTasksAndReturnToMainMenu() {
+        storage.save(tasks.getTasks());
+        ui.printSaved();
+        ui.printBanner();
     }
 
     /***
