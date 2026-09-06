@@ -1,11 +1,17 @@
 package doe;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 /** Tests task status changes and the display and storage formats of each task type. */
 class TaskTest {
+
+    @Test
+    void constructor_nullDescription_assertionErrorThrown() {
+        assertThrows(AssertionError.class, () -> new Task(null));
+    }
 
     @Test
     void task_markAndUnmark_statusAndStorageFormatUpdated() {

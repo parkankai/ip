@@ -14,6 +14,8 @@ public class TaskList {
      * @param tasks A list of tasks typically loaded from storage.
      */
     public TaskList(List<Task> tasks) {
+        assert tasks != null : "The backing task list must exist";
+        assert tasks.stream().allMatch(task -> task != null) : "The task list must not contain null tasks";
         this.tasks = tasks;
     }
 
@@ -32,6 +34,7 @@ public class TaskList {
      * @param task The Task object to add.
      */
     public void addTask(Task task) {
+        assert task != null : "Only valid task objects may be added";
         tasks.add(task);
     }
 
@@ -42,6 +45,7 @@ public class TaskList {
      * @return The Task object that was removed.
      */
     public Task removeTask(int index) {
+        assert index >= 0 && index < tasks.size() : "Removal index must refer to an existing task";
         return tasks.remove(index);
     }
 
@@ -52,6 +56,7 @@ public class TaskList {
      * @return The Task object at the specified index.
      */
     public Task getTask(int index) {
+        assert index >= 0 && index < tasks.size() : "Lookup index must refer to an existing task";
         return tasks.get(index);
     }
 
@@ -71,6 +76,7 @@ public class TaskList {
      * @return The zero-based index of the matching task, or -1 if no match is found.
      */
     public int findTaskIndex(String removeInput) {
+        assert removeInput != null : "Task lookup input must have been read before searching";
         int removeIndex = -1;
         // Step 1: Try treating input as an index number
         try {
@@ -91,6 +97,7 @@ public class TaskList {
                 }
             }
         }
+        assert removeIndex == -1 || removeIndex < tasks.size() : "A found task index must be within the list";
         return removeIndex;
     }
 
@@ -101,6 +108,7 @@ public class TaskList {
      * @return A list of matching Task objects.
      */
     public List<Task> findTasks(String keyword) {
+        assert keyword != null : "A search keyword must have been read before searching";
         String lowercaseKeyword = keyword.toLowerCase();
         return tasks.stream()
                 .filter(task -> task.getDescription().toLowerCase().contains(lowercaseKeyword))
