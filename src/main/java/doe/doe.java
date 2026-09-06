@@ -144,6 +144,10 @@ public class doe {
     }
 
     private String acceptTaskDescription(String input) {
+        assert pendingTaskType == Parser.TaskMenu.TODO
+                || pendingTaskType == Parser.TaskMenu.DEADLINE
+                || pendingTaskType == Parser.TaskMenu.EVENT
+                : "A task type must be selected before its description is accepted";
         if (containsStorageDelimiter(input)) {
             return "error: input cannot contain '|' character.\n\nwhat you want to add?";
         }
@@ -161,6 +165,9 @@ public class doe {
     }
 
     private String acceptTaskDate(String input) {
+        assert pendingTaskType == Parser.TaskMenu.DEADLINE || pendingTaskType == Parser.TaskMenu.EVENT
+                : "Only dated task types may request a date";
+        assert pendingDescription != null : "A task description must be accepted before its date";
         if (containsStorageDelimiter(input)) {
             return "error: input cannot contain '|' character.";
         }
@@ -177,6 +184,8 @@ public class doe {
     }
 
     private String finishAddingTask() {
+        assert pendingTaskType != null : "A task type must remain available until the add operation finishes";
+        assert pendingDescription != null : "A task description must remain available until the add operation finishes";
         storage.save(tasks.getTasks());
         guiState = GuiState.MAIN;
         pendingTaskType = null;
@@ -191,6 +200,7 @@ public class doe {
             return "could not find a task with that name or number. please try again.\n\n"
                     + getWelcomeMessage();
         }
+        assert index < tasks.size() : "A successful task lookup must return an existing index";
         Task removedTask = tasks.removeTask(index);
         storage.save(tasks.getTasks());
         return "item removed successfully!\n" + removedTask + "\n\n" + getWelcomeMessage();
@@ -213,6 +223,7 @@ public class doe {
                     + ".\n\n" + getWelcomeMessage();
         }
 
+        assert index >= 0 && index < tasks.size() : "A validated task number must map to an existing task";
         Task task = tasks.getTask(index);
         if (markAsDone) {
             task.markAsDone();
