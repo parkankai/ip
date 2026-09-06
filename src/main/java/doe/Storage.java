@@ -76,10 +76,9 @@ public class Storage {
      * @param currentTasks The list of tasks to be saved in storage.
      */
     public void save(List<Task> currentTasks) {
-        List<String> lines = new ArrayList<>();
-        for (Task task : currentTasks) {
-            lines.add(task.toFileFormat());
-        }
+        List<String> lines = currentTasks.stream()
+                .map(Task::toFileFormat)
+                .toList();
 
         try {
             Files.write(filePath, lines);

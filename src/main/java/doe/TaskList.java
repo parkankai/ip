@@ -1,6 +1,5 @@
 package doe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -102,13 +101,9 @@ public class TaskList {
      * @return A list of matching Task objects.
      */
     public List<Task> findTasks(String keyword) {
-        List<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            // Case-insensitive search
-            if (task.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        String lowercaseKeyword = keyword.toLowerCase();
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(lowercaseKeyword))
+                .toList();
     }
 }
