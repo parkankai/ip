@@ -13,6 +13,7 @@ public class Task {
      * @param taskName Description of the task.
      */
     public Task(String taskName) {
+        assert taskName != null : "A task must have a description";
         this.taskName = taskName;
         this.isDone = false;
     }

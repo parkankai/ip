@@ -201,6 +201,7 @@ public class UserInterface {
      * @return The zero-based integer index of the selected task, or -1 if invalid.
      */
     public int getTaskIndex(int numberOfTasks) {
+        assert numberOfTasks >= 0 : "A task count cannot be negative";
         if (numberOfTasks == 0) {
             System.out.println("there are no tasks to mark yet. add a task first.");
             return -1;
@@ -264,7 +265,6 @@ public class UserInterface {
         System.out.println("____________________________________________________________");
     }
 }
-
 
 
 
