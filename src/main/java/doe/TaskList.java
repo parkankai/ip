@@ -1,6 +1,7 @@
 package doe;
 
 import java.util.List;
+import java.util.Comparator;
 
 /**
  * Contains the task list; has operations to add/delete/modify tasks in the list.
@@ -26,6 +27,14 @@ public class TaskList {
      */
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    /**
+     * Sorts tasks chronologically with undated tasks last. Equal dates and undated
+     * tasks retain their relative order because List.sort is stable.
+     */
+    public void sortByDate() {
+        tasks.sort(Comparator.comparing(Task::getDate, Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
     /**

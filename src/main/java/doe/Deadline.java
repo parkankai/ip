@@ -31,6 +31,16 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns this task's date and time for sorting.
+     *
+     * @return The stored deadline.
+     */
+    @Override
+    public LocalDateTime getDate() {
+        return deadline;
+    }
+
+    /**
      * Returns a string formatted for saving the deadline task to a file.
      *
      * @return File-formatted string representation of deadline task.

@@ -1,5 +1,7 @@
 package doe;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents a Todo item and whether it has been completed.
  */
@@ -16,6 +18,15 @@ public class Task {
         assert taskName != null : "A task must have a description";
         this.taskName = taskName;
         this.isDone = false;
+    }
+
+    /**
+     * Returns the date used for chronological sorting, or null for an undated task.
+     *
+     * @return The task's scheduled date and time, or null if it has none.
+     */
+    public LocalDateTime getDate() {
+        return null;
     }
 
     /**

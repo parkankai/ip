@@ -43,7 +43,7 @@ public class Parser {
      * Represents the available commands in the todo menu.
      */
     public enum TodoMenu {
-        ADD, REMOVE, VIEW, MARK, UNMARK, FIND, EXIT, UNKNOWN;
+        ADD, REMOVE, VIEW, SORT, MARK, UNMARK, FIND, EXIT, UNKNOWN;
 
         /**
          * Parses a string input into a TodoMenu enum value.
@@ -63,15 +63,18 @@ public class Parser {
                 case "view":
                     return VIEW;
                 case "4":
+                case "sort":
+                    return SORT;
+                case "5":
                 case "mark":
                     return MARK;
-                case "5":
+                case "6":
                 case "unmark":
                     return UNMARK;
-                case "6":
+                case "7":
                 case "find":
                     return FIND;
-                case "7":
+                case "8":
                 case "exit":
                     return EXIT;
                 default:

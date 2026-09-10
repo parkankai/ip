@@ -103,6 +103,10 @@ public class doe {
             case REMOVE:
                 guiState = GuiState.REMOVE;
                 return "what you want to remove?\n\n" + taskListText(tasks.getTasks());
+            case SORT:
+                sortTasks();
+                guiState = GuiState.MAIN;
+                return UserInterface.sortedTodoListText(tasks.getTasks()) + "\n\n" + getWelcomeMessage();
             case VIEW:
                 guiState = GuiState.MAIN;
                 return taskListText(tasks.getTasks()) + "\n\n" + getWelcomeMessage();
@@ -242,7 +246,7 @@ public class doe {
     }
 
     private static String todoMenuText() {
-        return "modify todo list\n1. add\n2. remove\n3. view\n4. mark\n5. unmark\n6. find\n7. exit";
+        return "modify todo list\n1. add\n2. remove\n3. view\n4. sort\n5. mark\n6. unmark\n7. find\n8. exit";
     }
 
     private static String taskListText(List<Task> taskItems) {
@@ -316,6 +320,11 @@ public class doe {
                     break;
                 case REMOVE:
                     removeTaskFromConsole();
+                    return;
+                case SORT:
+                    sortTasks();
+                    ui.printSortedTodoList(tasks.getTasks());
+                    ui.printBanner();
                     return;
                 case VIEW:
                     ui.printTodoList(tasks.getTasks());
@@ -475,6 +484,12 @@ public class doe {
         ui.printFindPrompt();
         ui.printMatchingTasks(tasks.findTasks(ui.readCommand()));
         ui.printBanner();
+    }
+
+    /** Reorders the backing list and saves it so task numbers survive a restart. */
+    private void sortTasks() {
+        tasks.sortByDate();
+        storage.save(tasks.getTasks());
     }
 
     private void saveTasksAndReturnToMainMenu() {

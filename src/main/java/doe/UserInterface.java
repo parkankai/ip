@@ -48,10 +48,11 @@ public class UserInterface {
             + "1. add\n"
             + "2. remove\n"
             + "3. view\n"
-            + "4. mark\n"
-            + "5. unmark\n"
-            + "6. find\n"
-            + "7. exit\n"
+            + "4. sort\n"
+            + "5. mark\n"
+            + "6. unmark\n"
+            + "7. find\n"
+            + "8. exit\n"
             + "____________________________________________________________\n";
 
     private static final String BYE = "____________________________________________________________\n"
@@ -190,6 +191,38 @@ public class UserInterface {
             Task task = todoItems.get(i);
             System.out.println((i + 1) + ". " + task);
         }
+        System.out.println("____________________________________________________________");
+    }
+
+    /**
+     * Formats a sorted list with a separate section for tasks without dates.
+     * Numbering continues across sections to match the backing task list.
+     *
+     * @param sortedTasks Tasks already sorted by date, with undated tasks last.
+     * @return The list text shown after sorting in either interface.
+     */
+    public static String sortedTodoListText(List<Task> sortedTasks) {
+        StringBuilder result = new StringBuilder("here are the tasks in your list:");
+        boolean undatedSection = false;
+        for (int i = 0; i < sortedTasks.size(); i++) {
+            Task task = sortedTasks.get(i);
+            if (!undatedSection && task.getDate() == null) {
+                result.append("\n\nno deadlines:");
+                undatedSection = true;
+            }
+            result.append('\n').append(i + 1).append(". ").append(task);
+        }
+        return result.toString();
+    }
+
+    /**
+     * Prints the sorted list using the console's usual separators.
+     *
+     * @param sortedTasks Tasks already sorted by date.
+     */
+    public void printSortedTodoList(List<Task> sortedTasks) {
+        System.out.println("____________________________________________________________");
+        System.out.println(sortedTodoListText(sortedTasks));
         System.out.println("____________________________________________________________");
     }
 
