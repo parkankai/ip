@@ -31,6 +31,16 @@ public class Event extends Task {
     }
 
     /**
+     * Returns this task's date and time for sorting.
+     *
+     * @return The stored timing.
+     */
+    @Override
+    public LocalDateTime getDate() {
+        return timing;
+    }
+
+    /**
      * Returns a string formatted for saving the event task to a file.
      *
      * @return File-formatted string representation of event task.
