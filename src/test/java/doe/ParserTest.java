@@ -23,8 +23,13 @@ class ParserTest {
         assertEquals(Parser.TodoMenu.ADD, Parser.TodoMenu.fromString("1"));
         assertEquals(Parser.TodoMenu.REMOVE, Parser.TodoMenu.fromString("remove"));
         assertEquals(Parser.TodoMenu.VIEW, Parser.TodoMenu.fromString(" 3 "));
+        assertEquals(Parser.TodoMenu.SORT, Parser.TodoMenu.fromString("4"));
+        assertEquals(Parser.TodoMenu.SORT, Parser.TodoMenu.fromString(" SoRt "));
+        assertEquals(Parser.TodoMenu.MARK, Parser.TodoMenu.fromString("5"));
+        assertEquals(Parser.TodoMenu.FIND, Parser.TodoMenu.fromString("7"));
+        assertEquals(Parser.TodoMenu.EXIT, Parser.TodoMenu.fromString("8"));
         assertEquals(Parser.TodoMenu.MARK, Parser.TodoMenu.fromString("MARK"));
-        assertEquals(Parser.TodoMenu.UNMARK, Parser.TodoMenu.fromString("5"));
+        assertEquals(Parser.TodoMenu.UNMARK, Parser.TodoMenu.fromString("6"));
         assertEquals(Parser.TodoMenu.EXIT, Parser.TodoMenu.fromString("exit"));
         assertEquals(Parser.TodoMenu.UNKNOWN, Parser.TodoMenu.fromString("delete all"));
     }
