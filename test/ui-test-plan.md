@@ -9,7 +9,7 @@ Compile first with `./gradlew classes` using Java 25. Each session runs in a fre
 ```sh
 test_classes="$PWD/build/classes/java/main"
 test_workspace="$(mktemp -d)"
-cd "$test_workspace" && java -ea -cp "$test_classes" doe.doe
+cd "$test_workspace" && java -ea -cp "$test_classes" doe.Doe
 ```
 
 ## Test case: Exit from the main menu

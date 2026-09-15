@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -45,6 +46,9 @@ public class DialogBox extends HBox {
         displayPicture.setImage(image);
         speaker.setText(speakerName);
         timestamp.setText(LocalTime.now().format(TIME_FORMAT));
+        // Keep avatar space proportional to the row so narrow windows leave room for text.
+        displayPicture.fitWidthProperty().bind(Bindings.min(88, Bindings.max(40, widthProperty().subtract(360))));
+        displayPicture.fitHeightProperty().bind(displayPicture.fitWidthProperty());
     }
 
     /**

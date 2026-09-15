@@ -203,12 +203,12 @@ public class UserInterface {
      */
     public static String sortedTodoListText(List<Task> sortedTasks) {
         StringBuilder result = new StringBuilder("here are the tasks in your list:");
-        boolean undatedSection = false;
+        boolean hasUndatedSection = false;
         for (int i = 0; i < sortedTasks.size(); i++) {
             Task task = sortedTasks.get(i);
-            if (!undatedSection && task.getDate() == null) {
+            if (!hasUndatedSection && task.getDate() == null) {
                 result.append("\n\nno deadlines:");
-                undatedSection = true;
+                hasUndatedSection = true;
             }
             result.append('\n').append(i + 1).append(". ").append(task);
         }

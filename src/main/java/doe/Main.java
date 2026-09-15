@@ -12,7 +12,7 @@ import javafx.stage.Stage;
  * JavaFX entry point for Doe's FXML-based graphical interface.
  */
 public class Main extends Application {
-    private final doe chatbot = new doe("todo.txt");
+    private final Doe chatbot = new Doe("todo.txt");
 
     /**
      * Loads the main window and injects the existing Doe application into its controller.
@@ -28,8 +28,8 @@ public class Main extends Application {
 
         stage.setTitle("Doe");
         stage.setScene(scene);
-        stage.setMinHeight(680);
-        stage.setMinWidth(480);
+        stage.setMinHeight(480);
+        stage.setMinWidth(400);
         loader.<MainWindow>getController().setDoe(chatbot);
         stage.show();
     }

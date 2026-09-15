@@ -20,7 +20,7 @@ class SortResponseTest {
         new Storage(file).save(List.of(new Todo("read"),
                 new Deadline("submit", "11-10-2026 1800"),
                 new Event("meet", "10-10-2026 0900")));
-        doe chatbot = new doe(file);
+        Doe chatbot = new Doe(file);
         assertTrue(chatbot.getResponse("todo").contains("4. sort\n5. mark\n6. unmark\n7. find\n8. exit"));
         assertEquals("here are the tasks in your list:\n"
                 + "1. [e][ ] meet (at: 10 Oct 2026, 09:00)\n"
@@ -28,7 +28,7 @@ class SortResponseTest {
                 + "no deadlines:\n3. [t][ ] read\n\n" + chatbot.getWelcomeMessage(),
                 chatbot.getResponse("4"));
 
-        doe reopened = new doe(file);
+        Doe reopened = new Doe(file);
         reopened.getResponse("todo");
         reopened.getResponse("5");
         assertTrue(reopened.getResponse("1").contains("[x] meet"));

@@ -95,3 +95,20 @@
     -fx-background-color: #dfa053;
     -fx-translate-y: 1px;
 }
+
+.root:compact .terminal-title {
+    -fx-font-size: 18px;
+}
+
+.root:compact .terminal-header {
+    -fx-padding: 10px 14px;
+}
+
+.root:compact .command-bar {
+    -fx-padding: 8px;
+}
+
+.root:compact .command-input,
+.root:compact .send-button {
+    -fx-font-size: 16px;
+}
