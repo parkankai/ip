@@ -88,6 +88,6 @@ tasks.register('runConsole', JavaExec) {
     group = 'application'
     description = 'Runs the original console interface.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'doe.doe'
+    mainClass = 'doe.Doe'
     standardInput = System.in
 }

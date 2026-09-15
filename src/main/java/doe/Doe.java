@@ -8,7 +8,7 @@ import java.util.List;
  * Entry point for the doe chatbot application.
  */
 
-public class doe {
+public class Doe {
     private enum GuiState {
         MAIN, TODO_MENU, ADD_TYPE, ADD_DESCRIPTION, ADD_DATE, REMOVE, MARK, UNMARK, FIND
     }
@@ -25,7 +25,7 @@ public class doe {
      *
      * @param filePath The path to the next file used for storing tasks.
      */
-    public doe(String filePath) {
+    public Doe(String filePath) {
         ui = new UserInterface();
         storage = new Storage(filePath);
         tasks = new TaskList(storage.load());
@@ -505,6 +505,6 @@ public class doe {
      */
     public static void main(String[] args) {
         // initialises doe with target file and starts the main loop
-        new doe("todo.txt").run();
+        new Doe("todo.txt").run();
     }
 }

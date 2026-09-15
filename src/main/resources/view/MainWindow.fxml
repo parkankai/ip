@@ -25,7 +25,8 @@
                     </children>
                     <padding><Insets bottom="14.0" left="24.0" right="24.0" top="14.0" /></padding>
                 </HBox>
-                <StackPane fx:id="bannerPanel" alignment="CENTER" minHeight="200.0" prefHeight="200.0" maxHeight="200.0"
+                <StackPane fx:id="bannerPanel" alignment="CENTER" minWidth="0.0"
+                           minHeight="200.0" prefHeight="200.0" maxHeight="200.0"
                            styleClass="ascii-panel">
                     <children>
                         <ImageView fx:id="bannerImage" fitHeight="200.0" pickOnBounds="true"
@@ -33,17 +34,18 @@
                     </children>
                     <VBox.margin><Insets bottom="16.0" left="22.0" right="22.0" top="18.0" /></VBox.margin>
                 </StackPane>
-                <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" styleClass="chat-scroll">
+                <ScrollPane fx:id="scrollPane" minWidth="0.0" minHeight="0.0"
+                            fitToWidth="true" hbarPolicy="NEVER" styleClass="chat-scroll">
                     <content>
-                        <VBox fx:id="dialogContainer" fillWidth="true" spacing="6.0" />
+                        <VBox fx:id="dialogContainer" minWidth="0.0" fillWidth="true" spacing="6.0" />
                     </content>
                     <VBox.vgrow><Priority fx:constant="ALWAYS" /></VBox.vgrow>
                     <VBox.margin><Insets left="22.0" right="22.0" /></VBox.margin>
                 </ScrollPane>
-                <HBox alignment="CENTER" spacing="14.0" styleClass="command-bar">
+                <HBox fx:id="commandBar" alignment="CENTER" spacing="14.0" styleClass="command-bar">
                     <children>
                         <Label text=">" styleClass="prompt-symbol" />
-                        <TextField fx:id="userInput" onAction="#handleUserInput" promptText="enter command..."
+                        <TextField fx:id="userInput" minWidth="0.0" onAction="#handleUserInput" promptText="enter command..."
                                    styleClass="command-input">
                             <HBox.hgrow><Priority fx:constant="ALWAYS" /></HBox.hgrow>
                         </TextField>
