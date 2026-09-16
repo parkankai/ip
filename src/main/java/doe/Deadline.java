@@ -4,19 +4,21 @@ package doe;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 /**
  * Represents a task that must be completed by a stated deadline.
  * The deadline wording is kept as entered by the user.
  */
 public class Deadline extends Task {
-    /** The user-provided deadline note for this task. */
-    private final LocalDateTime deadline;
-
     // Formatter to read the user input (e.g., 2026-10-15 1800)
-    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy HHmm");
+    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("dd-MM-uuuu HHmm")
+            .withResolverStyle(ResolverStyle.STRICT);
     // Formatter to display the date nicely (e.g., Oct 15 2026, 18:00)
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+
+    /** The validated deadline for this task. */
+    private final LocalDateTime deadline;
 
     /**
      * Creates an incomplete deadline task with its description and deadline note.
@@ -27,7 +29,7 @@ public class Deadline extends Task {
      */
     public Deadline(String taskName, String deadline) throws DateTimeParseException {
         super(taskName);
-        this.deadline = LocalDateTime.parse(deadline.trim(), INPUT_FORMAT);
+        this.deadline = LocalDateTime.parse(deadline.strip().replaceAll("\\s+", " "), INPUT_FORMAT);
     }
 
     /**
@@ -47,7 +49,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toFileFormat() {
-        return "DEADLINE|"  + super.toFileFormat() + "|" + deadline.format(INPUT_FORMAT);
+        return "DEADLINE|" + super.toFileFormat() + "|" + deadline.format(INPUT_FORMAT);
     }
 
     /**

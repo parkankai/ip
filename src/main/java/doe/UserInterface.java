@@ -123,6 +123,9 @@ public class UserInterface {
      * @return The user's input string.
      */
     public String readCommand() {
+        if (!scanner.hasNextLine()) {
+            throw new java.util.NoSuchElementException("console input closed");
+        }
         return scanner.nextLine();
     }
 
@@ -241,7 +244,7 @@ public class UserInterface {
         }
         System.out.println("enter the task number:");
         try {
-            int taskNumber = Integer.parseInt(scanner.nextLine().trim());
+            int taskNumber = Integer.parseInt(readCommand().strip());
             if (taskNumber >= 1 && taskNumber <= numberOfTasks) {
                 return taskNumber - 1;
             }
@@ -285,14 +288,14 @@ public class UserInterface {
      *
      * @param matchingTasks List of tasks that is found suitable.
      */
-    public void printMatchingTasks(List<Task> matchingTasks) {
+    public void printMatchingTasks(List<Task> matchingTasks, List<Task> allTasks) {
         System.out.println("____________________________________________________________");
         if (matchingTasks.isEmpty()) {
             System.out.println("no matching tasks found.");
         } else {
             System.out.println("Here are the matching tasks in your list:");
             for (int i = 0; i < matchingTasks.size(); i++) {
-                System.out.println((i + 1) + ". " + matchingTasks.get(i));
+                System.out.println((allTasks.indexOf(matchingTasks.get(i)) + 1) + ". " + matchingTasks.get(i));
             }
         }
         System.out.println("____________________________________________________________");

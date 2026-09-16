@@ -16,8 +16,19 @@ public class Task {
      */
     public Task(String taskName) {
         assert taskName != null : "A task must have a description";
-        this.taskName = taskName;
+        this.taskName = validateDescription(taskName);
         this.isDone = false;
+    }
+
+    /** Validates and trims a description before a task or multi-step operation accepts it. */
+    public static String validateDescription(String taskName) {
+        if (taskName == null || taskName.isBlank()) {
+            throw new IllegalArgumentException("task description cannot be blank.");
+        }
+        if (taskName.contains("|") || taskName.contains("\n") || taskName.contains("\r")) {
+            throw new IllegalArgumentException("task description cannot contain '|', or line breaks.");
+        }
+        return taskName.strip();
     }
 
     /**

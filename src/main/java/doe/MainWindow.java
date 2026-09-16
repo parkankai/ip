@@ -103,7 +103,7 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleUserInput() {
         String input = userInput.getText();
-        if (chatbot == null || input.isBlank()) {
+        if (chatbot == null) {
             return;
         }
 

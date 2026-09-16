@@ -1,89 +1,114 @@
 package doe;
 
-
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Deals with loading tasks from the file and saving tasks in the file.
- */
+/** Loads validated task records and replaces the save file only after a complete write. */
 public class Storage {
     private final Path filePath;
+    /** A failed or partial load blocks saving to preserve the original data for recovery. */
+    private String loadWarning = "";
 
-    /**
-     * Creates a new Storage instance initialised with specific file path.
-     *
-     * @param filePath The file path location for storage.
-     */
+    /** Creates storage at the supplied path. */
     public Storage(String filePath) {
-        this.filePath = Path.of(filePath);
+        this.filePath = Path.of(filePath).toAbsolutePath();
     }
 
-    /**
-     * Loads tasks from the text file, parsing each line back into Task objects.
-     *
-     * @return A list of tasks retrieved from the storage file.
-     */
+    /** Returns a startup warning, including any invalid record line numbers. */
+    public String getLoadWarning() {
+        return loadWarning;
+    }
+
+    /** Loads valid records, preserving a damaged or unreadable source without overwriting it. */
     public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(filePath)) {
-            return tasks;
-        }
-
+        List<String> invalidLines = new ArrayList<>();
+        loadWarning = "";
         try {
             List<String> lines = Files.readAllLines(filePath);
-            for (String line : lines) {
-                if (line.trim().isEmpty()) {
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (line.isBlank()) {
                     continue;
                 }
-                String[] items = line.split("\\|");
-                if (items.length < 3) {
-                    continue;
-                }
-
-                String taskType = items[0];
-                boolean isDone = Boolean.parseBoolean(items[1]);
-                String taskName = items[2];
-
-                Task task = null;
-                if (taskType.equals("TODO")) {
-                    task = new Todo(taskName);
-                } else if (taskType.equals("DEADLINE") && items.length > 3) {
-                    task = new Deadline(taskName, items[3]);
-                } else if (taskType.equals("EVENT") && items.length > 3) {
-                    task = new Event(taskName, items[3]);
-                }
-
-                if (task != null) {
-                    if (isDone) {
+                try {
+                    String[] items = line.split("\\|", -1);
+                    if (items.length < 3 || !(items[1].equals("true") || items[1].equals("false"))) {
+                        throw new IllegalArgumentException("invalid fields");
+                    }
+                    Task task;
+                    if (items[0].equals("TODO") && items.length == 3) {
+                        task = new Todo(items[2]);
+                    } else if (items[0].equals("DEADLINE") && items.length == 4) {
+                        task = new Deadline(items[2], items[3]);
+                    } else if (items[0].equals("EVENT") && items.length == 4) {
+                        task = new Event(items[2], items[3]);
+                    } else {
+                        throw new IllegalArgumentException("invalid task type or field count");
+                    }
+                    if (Boolean.parseBoolean(items[1])) {
                         task.markAsDone();
                     }
-                    tasks.add(task);
+                    new TaskList(tasks).addTask(task);
+                } catch (IllegalArgumentException | java.time.DateTimeException exception) {
+                    invalidLines.add(Integer.toString(i + 1));
                 }
             }
-        } catch (IOException e) {
-            System.out.println("an error occurred while loading tasks: " + e.getMessage());
+            if (!invalidLines.isEmpty()) {
+                loadWarning = "invalid task records at lines " + String.join(", ", invalidLines) + ".";
+            }
+        } catch (NoSuchFileException exception) {
+            // A missing file is expected on first use. A dangling link is a recovery problem.
+            if (Files.isSymbolicLink(filePath)) {
+                loadWarning = "the task file is a broken symbolic link.";
+            }
+        } catch (IOException | SecurityException exception) {
+            loadWarning = "could not read task file: " + exception.getMessage();
+        }
+        if (!loadWarning.isEmpty()) {
+            loadWarning += " saving is disabled to protect the original file. repair " + filePath + " and restart.";
         }
         return tasks;
     }
 
     /**
-     * Saves the current list of tasks to the text file format.
+     * Writes a temporary sibling before replacing the save file. Failure leaves changes in memory.
      *
-     * @param currentTasks The list of tasks to be saved in storage.
+     * @throws IllegalStateException if startup recovery is required
+     * @throws UncheckedIOException if the new data cannot be saved
      */
     public void save(List<Task> currentTasks) {
-        List<String> lines = currentTasks.stream()
-                .map(Task::toFileFormat)
-                .toList();
-
+        if (!loadWarning.isEmpty()) {
+            throw new IllegalStateException(loadWarning);
+        }
+        Path temporaryFile = null;
         try {
-            Files.write(filePath, lines);
-        } catch (IOException e) {
-            System.out.println("an error occurred while saving tasks: " + e.getMessage());
+            Files.createDirectories(filePath.getParent());
+            temporaryFile = Files.createTempFile(filePath.getParent(), ".doe-", ".tmp");
+            Files.write(temporaryFile, currentTasks.stream().map(Task::toFileFormat).toList());
+            try {
+                Files.move(temporaryFile, filePath, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException exception) {
+                Files.move(temporaryFile, filePath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException exception) {
+            throw new UncheckedIOException("could not save tasks: " + exception.getMessage(), exception);
+        } finally {
+            if (temporaryFile != null) {
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException ignored) {
+                    // Cleanup must not hide the original save failure.
+                }
+            }
         }
     }
 }
