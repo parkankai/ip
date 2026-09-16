@@ -37,7 +37,8 @@ public class Doe {
      * @return Doe's greeting and the available main-menu commands.
      */
     public String getWelcomeMessage() {
-        return "hello! i'm doe :).\nwhat can i do for you?\n"
+        return (storage.getLoadWarning().isEmpty() ? "" : "warning: " + storage.getLoadWarning() + "\n")
+                + "hello! i'm doe :).\nwhat can i do for you?\n"
                 + "1. neigh\n2. meow\n3. list\n4. todo\n\ntype \"bye\" to exit";
     }
 
@@ -49,7 +50,20 @@ public class Doe {
      * @return Doe's response and, when needed, the next prompt.
      */
     public String getResponse(String input) {
-        String cleanedInput = input.trim();
+        try {
+            return processResponse(input);
+        } catch (IllegalArgumentException exception) {
+            return "error: " + exception.getMessage();
+        } catch (java.io.UncheckedIOException | IllegalStateException | SecurityException exception) {
+            guiState = GuiState.MAIN;
+            return "changes are in memory only and have not been saved. " + exception.getMessage()
+                    + "\n\n" + getWelcomeMessage();
+        }
+    }
+
+    /** Dispatches input while retaining the current prompt after validation failures. */
+    private String processResponse(String input) {
+        String cleanedInput = input.strip();
         switch (guiState) {
             case MAIN:
                 return respondToMainMenu(cleanedInput);
@@ -155,7 +169,7 @@ public class Doe {
         if (containsStorageDelimiter(input)) {
             return "error: input cannot contain '|' character.\n\nwhat you want to add?";
         }
-        pendingDescription = input;
+        pendingDescription = Task.validateDescription(input);
         if (pendingTaskType == Parser.TaskMenu.TODO) {
             tasks.addTask(new Todo(pendingDescription));
             return finishAddingTask();
@@ -183,7 +197,7 @@ public class Doe {
             }
             return finishAddingTask();
         } catch (DateTimeParseException exception) {
-            return "invalid date format. please use dd-mm-yyyy (e.g. 17-07-2004 1800).";
+            return "invalid date format. please use dd-mm-yyyy hhmm (e.g. 17-07-2004 1800).";
         }
     }
 
@@ -257,13 +271,14 @@ public class Doe {
         return result.toString();
     }
 
-    private static String matchingTasksText(List<Task> matchingTasks) {
+    private String matchingTasksText(List<Task> matchingTasks) {
         if (matchingTasks.isEmpty()) {
             return "no matching tasks found.";
         }
         StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
         for (int i = 0; i < matchingTasks.size(); i++) {
-            result.append('\n').append(i + 1).append(". ").append(matchingTasks.get(i));
+            result.append('\n').append(tasks.getTasks().indexOf(matchingTasks.get(i)) + 1)
+                    .append(". ").append(matchingTasks.get(i));
         }
         return result.toString();
     }
@@ -272,6 +287,20 @@ public class Doe {
      * Starts the main logical loop of doe bot to continuously read and execute commands.
      */
     public void run() {
+        if (!storage.getLoadWarning().isEmpty()) {
+            System.out.println("warning: " + storage.getLoadWarning());
+        }
+        try {
+            runConsole();
+        } catch (java.util.NoSuchElementException exception) {
+            ui.printBye();
+        } finally {
+            ui.closeScanner();
+        }
+    }
+
+    /** Runs console commands, reporting recoverable input and persistence errors at the menu boundary. */
+    private void runConsole() {
         ui.printBanner(); // starting point
 
         // main loop
@@ -290,7 +319,16 @@ public class Doe {
                     ui.printList();
                     break;
                 case TODO:
-                    runTodoMenu();
+                    try {
+                        runTodoMenu();
+                    } catch (IllegalArgumentException exception) {
+                        System.out.println("error: " + exception.getMessage());
+                        ui.printBanner();
+                    } catch (java.io.UncheckedIOException | IllegalStateException | SecurityException exception) {
+                        System.out.println("changes are in memory only and have not been saved. "
+                                + exception.getMessage());
+                        ui.printBanner();
+                    }
                     break;
                 case BYE:
                     ui.printBye();
@@ -298,6 +336,7 @@ public class Doe {
                     return; // terminates application by exiting run
 
                 case UNKNOWN:
+                default:
                     UserInterface.printUnexpectedInputMessage("horh");
             }
         }
@@ -393,7 +432,7 @@ public class Doe {
 
     private boolean addTodoFromConsole() {
         ui.printAddPrompt();
-        String description = ui.readCommand();
+        String description = Task.validateDescription(ui.readCommand());
         if (UserInterface.preventCorrupt(description)) {
             return false;
         }
@@ -403,7 +442,7 @@ public class Doe {
 
     private boolean addDatedTaskFromConsole(Parser.TaskMenu type) {
         ui.printAddPrompt();
-        String description = ui.readCommand();
+        String description = Task.validateDescription(ui.readCommand());
         if (UserInterface.preventCorrupt(description)) {
             return false;
         }
@@ -426,7 +465,7 @@ public class Doe {
             return true;
         } catch (DateTimeParseException exception) {
             UserInterface.printUnexpectedInputMessage("\n"
-                    + "invalid date format. please use dd-mm-yyyy "
+                    + "invalid date format. please use dd-mm-yyyy hhmm "
                     + "(e.g. 17-07-2004 1800).\n");
             return false;
         }
@@ -482,7 +521,7 @@ public class Doe {
 
     private void findTasksFromConsole() {
         ui.printFindPrompt();
-        ui.printMatchingTasks(tasks.findTasks(ui.readCommand()));
+        ui.printMatchingTasks(tasks.findTasks(ui.readCommand()), tasks.getTasks());
         ui.printBanner();
     }
 

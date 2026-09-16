@@ -1,7 +1,7 @@
 package doe;
 
-import java.util.List;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Contains the task list; has operations to add/delete/modify tasks in the list.
@@ -44,6 +44,11 @@ public class TaskList {
      */
     public void addTask(Task task) {
         assert task != null : "Only valid task objects may be added";
+        if (tasks.stream().anyMatch(existing -> existing.getClass() == task.getClass()
+                && existing.getDescription().equalsIgnoreCase(task.getDescription())
+                && java.util.Objects.equals(existing.getDate(), task.getDate()))) {
+            throw new IllegalArgumentException("that task already exists.");
+        }
         tasks.add(task);
     }
 
@@ -86,6 +91,7 @@ public class TaskList {
      */
     public int findTaskIndex(String removeInput) {
         assert removeInput != null : "Task lookup input must have been read before searching";
+        removeInput = removeInput.strip();
         int removeIndex = -1;
         // Step 1: Try treating input as an index number
         try {
@@ -101,8 +107,10 @@ public class TaskList {
         if (removeIndex == -1) {
             for (int i = 0; i < tasks.size(); i++) {
                 if (tasks.get(i).getDescription().equals(removeInput)) {
+                    if (removeIndex != -1) {
+                        throw new IllegalArgumentException("multiple tasks have that name; enter a task number.");
+                    }
                     removeIndex = i;
-                    break;
                 }
             }
         }
@@ -118,9 +126,9 @@ public class TaskList {
      */
     public List<Task> findTasks(String keyword) {
         assert keyword != null : "A search keyword must have been read before searching";
-        String lowercaseKeyword = keyword.toLowerCase();
+        String lowercaseKeyword = keyword.strip().toLowerCase(java.util.Locale.ROOT);
         return tasks.stream()
-                .filter(task -> task.getDescription().toLowerCase().contains(lowercaseKeyword))
+                .filter(task -> task.getDescription().toLowerCase(java.util.Locale.ROOT).contains(lowercaseKeyword))
                 .toList();
     }
 }
