@@ -45,7 +45,8 @@ class StorageRecoveryTest {
         Files.write(file, lines);
         Storage storage = new Storage(file.toString());
         assertEquals(1, storage.load().size());
-        assertTrue(storage.getLoadWarning().startsWith("invalid task records at lines 1, 2, 3, 4, 5, 6, 7, 8."));
+        assertTrue(storage.getLoadWarning().startsWith(
+                "Some tasks could not be loaded because lines 1, 2, 3, 4, 5, 6, 7, 8"));
         assertThrows(IllegalStateException.class, () -> storage.save(List.of()));
         assertEquals(lines, Files.readAllLines(file));
     }
@@ -74,7 +75,8 @@ class StorageRecoveryTest {
         }
         Storage storage = new Storage(link.toString());
         assertTrue(storage.load().isEmpty());
-        assertTrue(storage.getLoadWarning().contains("broken symbolic link"));
+        assertTrue(storage.getLoadWarning().contains("symbolic link points to a missing file"));
+        assertTrue(storage.getLoadWarning().contains("restore the linked file"));
         assertThrows(IllegalStateException.class, () -> storage.save(List.of()));
         assertTrue(Files.isSymbolicLink(link));
     }
@@ -101,11 +103,15 @@ class StorageRecoveryTest {
         String original = "TODO|false|valid\nbroken\n";
         Files.writeString(file, original);
         Doe doe = new Doe(file.toString());
-        assertTrue(doe.getWelcomeMessage().startsWith("warning: invalid task records at lines 2."));
+        assertTrue(doe.getStartupWarning().startsWith(
+                "Some tasks could not be loaded because lines 2"));
+        assertTrue(doe.getWelcomeMessage().startsWith("hello! i'm doe"));
         doe.getResponse("todo");
         doe.getResponse("mark");
         String response = doe.getResponse("1");
-        assertTrue(response.startsWith("changes are in memory only and have not been saved."));
+        assertTrue(response.startsWith("Some tasks could not be loaded because lines 2"));
+        assertTrue(response.contains("How to fix:"));
+        assertTrue(doe.wasLastResponseWarning());
         assertEquals(original, Files.readString(file));
         doe.getResponse("todo");
         assertTrue(doe.getResponse("view").contains("1. [t][x] valid"));

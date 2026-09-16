@@ -19,6 +19,7 @@ public class Doe {
     private GuiState guiState = GuiState.MAIN;
     private Parser.TaskMenu pendingTaskType;
     private String pendingDescription;
+    private boolean lastResponseWasWarning;
 
     /**
      * Initialises the required chatbot components such as UI, storage, and tasks.
@@ -37,9 +38,17 @@ public class Doe {
      * @return Doe's greeting and the available main-menu commands.
      */
     public String getWelcomeMessage() {
-        return (storage.getLoadWarning().isEmpty() ? "" : "warning: " + storage.getLoadWarning() + "\n")
-                + "hello! i'm doe :).\nwhat can i do for you?\n"
+        return "hello! i'm doe :).\nwhat can i do for you?\n"
                 + "1. neigh\n2. meow\n3. list\n4. todo\n\ntype \"bye\" to exit";
+    }
+
+    /**
+     * Returns a recoverable startup problem separately from the normal welcome message.
+     *
+     * @return A user-facing warning with recovery guidance, or an empty string when loading succeeded.
+     */
+    public String getStartupWarning() {
+        return storage.getLoadWarning();
     }
 
     /**
@@ -50,15 +59,28 @@ public class Doe {
      * @return Doe's response and, when needed, the next prompt.
      */
     public String getResponse(String input) {
+        lastResponseWasWarning = false;
         try {
             return processResponse(input);
         } catch (IllegalArgumentException exception) {
             return "error: " + exception.getMessage();
         } catch (java.io.UncheckedIOException | IllegalStateException | SecurityException exception) {
             guiState = GuiState.MAIN;
-            return "changes are in memory only and have not been saved. " + exception.getMessage()
-                    + "\n\n" + getWelcomeMessage();
+            lastResponseWasWarning = true;
+            if (!storage.getLoadWarning().isEmpty()) {
+                return storage.getLoadWarning();
+            }
+            return "Doe could not save your latest change.\n"
+                    + "The change is still in memory, but it has not been saved and will be lost when Doe closes.\n"
+                    + "How to fix: check that the task-file folder is writable and has enough free space, "
+                    + "then try again.\n"
+                    + "Technical details: " + exception.getMessage();
         }
+    }
+
+    /** Returns whether the most recent GUI response is a warning that needs a notice bubble. */
+    public boolean wasLastResponseWarning() {
+        return lastResponseWasWarning;
     }
 
     /** Dispatches input while retaining the current prompt after validation failures. */

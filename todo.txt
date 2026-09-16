@@ -1,7 +1,4 @@
-DEADLINE|false|level 8|26-08-2026 2359
-EVENT|true|cycle|09-09-2026 1900
 TODO|true|journal
-TODO|false|journal
-TODO|false|journal
 TODO|false|read
-TODO|false|sleep
+EVENT|true|run|26-09-2026 1920
+DEADLINE|false|assignment 2|03-08-2026 2359

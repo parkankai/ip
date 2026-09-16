@@ -44,11 +44,6 @@ public class TaskList {
      */
     public void addTask(Task task) {
         assert task != null : "Only valid task objects may be added";
-        if (tasks.stream().anyMatch(existing -> existing.getClass() == task.getClass()
-                && existing.getDescription().equalsIgnoreCase(task.getDescription())
-                && java.util.Objects.equals(existing.getDate(), task.getDate()))) {
-            throw new IllegalArgumentException("that task already exists.");
-        }
         tasks.add(task);
     }
 

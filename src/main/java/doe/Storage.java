@@ -62,18 +62,25 @@ public class Storage {
                 }
             }
             if (!invalidLines.isEmpty()) {
-                loadWarning = "invalid task records at lines " + String.join(", ", invalidLines) + ".";
+                loadWarning = "Some tasks could not be loaded because lines "
+                        + String.join(", ", invalidLines) + " in your task file have an invalid format.\n"
+                        + "Your original file has not been changed, and saving is paused to prevent data loss.\n"
+                        + "How to fix: correct or remove those lines in " + filePath + ", then restart Doe.";
             }
         } catch (NoSuchFileException exception) {
             // A missing file is expected on first use. A dangling link is a recovery problem.
             if (Files.isSymbolicLink(filePath)) {
-                loadWarning = "the task file is a broken symbolic link.";
+                loadWarning = "Doe could not open your task file because its symbolic link points to a missing file.\n"
+                        + "Saving is paused to prevent the link from being replaced.\n"
+                        + "How to fix: restore the linked file or replace the broken link at " + filePath
+                        + ", then restart Doe.";
             }
         } catch (IOException | SecurityException exception) {
-            loadWarning = "could not read task file: " + exception.getMessage();
-        }
-        if (!loadWarning.isEmpty()) {
-            loadWarning += " saving is disabled to protect the original file. repair " + filePath + " and restart.";
+            loadWarning = "Doe could not read your task file at " + filePath + ".\n"
+                    + "Reason: " + exception.getMessage() + "\n"
+                    + "Saving is paused to prevent data loss.\n"
+                    + "How to fix: check that the path is a readable file and that Doe has permission to open it, "
+                    + "then restart Doe.";
         }
         return tasks;
     }

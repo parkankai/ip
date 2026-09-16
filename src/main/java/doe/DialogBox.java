@@ -81,4 +81,18 @@ public class DialogBox extends HBox {
         box.getStyleClass().add("doe-dialog");
         return box;
     }
+
+    /**
+     * Creates a visually distinct Doe notice for a recoverable startup problem.
+     *
+     * @param text Warning and recovery guidance.
+     * @param image Doe display image.
+     * @return Doe warning dialog box.
+     */
+    public static DialogBox getWarningDialog(String text, Image image) {
+        DialogBox box = getDoeDialog(text, image);
+        box.speaker.setText("⚠  DOE NOTICE");
+        box.getStyleClass().add("warning-dialog");
+        return box;
+    }
 }

@@ -112,15 +112,15 @@ class DomainBoundaryTest {
     }
 
     @Test
-    void duplicates_completionIgnoredButTypeAndDateDistinguishTasks() {
+    void duplicates_areRetainedAlongsideDistinctTypesAndDates() {
         TaskList tasks = new TaskList(new ArrayList<>());
         Task done = new Event("meeting", "01-01-2027 1200");
         done.markAsDone();
         tasks.addTask(done);
-        assertThrows(IllegalArgumentException.class, () -> tasks.addTask(new Event("MEETING", "01-01-2027 1200")));
+        tasks.addTask(new Event("MEETING", "01-01-2027 1200"));
         tasks.addTask(new Event("meeting", "01-01-2027 1201"));
         tasks.addTask(new Deadline("meeting", "01-01-2027 1200"));
         tasks.addTask(new Event("different", "01-01-2027 1200"));
-        assertEquals(4, tasks.size());
+        assertEquals(5, tasks.size());
     }
 }

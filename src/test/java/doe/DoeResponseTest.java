@@ -68,7 +68,7 @@ class DoeResponseTest {
     }
 
     @Test
-    void add_invalidDescriptionsAndDuplicate_canRetryAtSamePrompt() {
+    void add_invalidDescriptionsCanRetryAndDuplicateIsSaved() {
         beginAdd("todo");
         assertEquals("error: input cannot contain '|' character.\n\nwhat you want to add?",
                 doe.getResponse("bad|name"));
@@ -76,13 +76,12 @@ class DoeResponseTest {
         assertEquals("error: task description cannot contain '|', or line breaks.", doe.getResponse("a\nb"));
         assertSaved(doe.getResponse("first"));
         beginAdd("todo");
-        assertEquals("error: that task already exists.", doe.getResponse("FIRST"));
-        assertSaved(doe.getResponse("second"));
-        assertEquals(List.of("TODO|false|first", "TODO|false|second"), records());
+        assertSaved(doe.getResponse("FIRST"));
+        assertEquals(List.of("TODO|false|first", "TODO|false|FIRST"), records());
     }
 
     @Test
-    void add_invalidDatesAndDuplicate_canRetryWithoutLosingDescription() {
+    void add_invalidDatesCanRetryAndDatedDuplicateIsSaved() {
         for (String type : List.of("deadline", "event")) {
             beginAdd(type);
             doe.getResponse("appointment");
@@ -92,8 +91,7 @@ class DoeResponseTest {
             assertSaved(doe.getResponse("01-01-2027 1200"));
             beginAdd(type);
             doe.getResponse("appointment");
-            assertEquals("error: that task already exists.", doe.getResponse("01-01-2027 1200"));
-            assertSaved(doe.getResponse("02-01-2027 1200"));
+            assertSaved(doe.getResponse("01-01-2027 1200"));
         }
         assertEquals(4, storage.load().size());
     }

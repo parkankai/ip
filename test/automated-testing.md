@@ -12,7 +12,7 @@ restore standard streams; the locale test restores the original default locale.
 Keep tests sequential because these JVM settings are shared. The symbolic-link
 test is skipped with an explanation on systems that cannot create symbolic links.
 
-The suite covers task validation and formatting, every menu alias, duplicate rules,
+The suite covers task validation and formatting, every menu alias, duplicate retention,
 sorting and lookup boundaries, Unicode and locale-independent searching, chat state
 transitions and retries, console workflows, persistence, recovery warnings, and
 failed-write cleanup. Chat response logic is tested without launching JavaFX.

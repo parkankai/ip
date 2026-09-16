@@ -171,7 +171,7 @@ class ConsoleTest {
         Path file = directory.resolve("tasks.txt");
         Files.writeString(file, "broken\n");
         run("todo\nadd\ntodo\nread\nbye\n");
-        assertTrue(text().startsWith("warning: invalid task records at lines 1."));
+        assertTrue(text().startsWith("warning: Some tasks could not be loaded because lines 1"));
         assertTrue(text().contains("changes are in memory only and have not been saved."));
         assertEquals("broken\n", Files.readString(file));
     }

@@ -581,11 +581,11 @@ ____________________________________________________________
 
 ```
 
-## Test case: Reject blank and duplicate descriptions
+## Test case: Reject blank and retain duplicate descriptions
 
 ### Aim
 
-Reject a blank console description and a duplicate after trimming and case normalization, retaining just the original task.
+Reject a blank console description, then retain both tasks when their descriptions differ only by case and whitespace.
 
 ### Inputs
 
@@ -741,7 +741,10 @@ ____________________________________________________________
 what you want to add?
 ____________________________________________________________
 
-error: that task already exists.
+____________________________________________________________
+item saved successfully!
+____________________________________________________________
+
 ____________________________________________________________
      _          
   __| | ___  ___
@@ -775,6 +778,7 @@ ____________________________________________________________
 ____________________________________________________________
 here are the tasks in your list:
 1. [t][ ] read
+2. [t][ ] READ
 ____________________________________________________________
 ____________________________________________________________
      _          

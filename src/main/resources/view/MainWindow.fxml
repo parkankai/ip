@@ -26,10 +26,10 @@
                     <padding><Insets bottom="14.0" left="24.0" right="24.0" top="14.0" /></padding>
                 </HBox>
                 <StackPane fx:id="bannerPanel" alignment="CENTER" minWidth="0.0"
-                           minHeight="200.0" prefHeight="200.0" maxHeight="200.0"
+                           minHeight="140.0" prefHeight="140.0" maxHeight="140.0"
                            styleClass="ascii-panel">
                     <children>
-                        <ImageView fx:id="bannerImage" fitHeight="200.0" pickOnBounds="true"
+                        <ImageView fx:id="bannerImage" fitHeight="140.0" pickOnBounds="true"
                                    preserveRatio="true" smooth="false" />
                     </children>
                     <VBox.margin><Insets bottom="16.0" left="22.0" right="22.0" top="18.0" /></VBox.margin>

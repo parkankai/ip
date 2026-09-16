@@ -41,13 +41,13 @@ class ErrorHandlingTest {
     }
 
     @Test
-    void duplicates_sameDetailsRejected_differentDatesAllowed() {
+    void duplicates_sameDetailsAndDifferentDatesAllowed() {
         TaskList tasks = new TaskList(new ArrayList<>());
         tasks.addTask(new Todo("read"));
-        assertThrows(IllegalArgumentException.class, () -> tasks.addTask(new Todo(" READ ")));
+        tasks.addTask(new Todo(" READ "));
         tasks.addTask(new Deadline("read", "01-01-2027 0900"));
         tasks.addTask(new Deadline("read", "02-01-2027 0900"));
-        assertEquals(3, tasks.size());
+        assertEquals(4, tasks.size());
         assertEquals(tasks.getTasks(), tasks.findTasks("  "));
     }
 
@@ -59,11 +59,13 @@ class ErrorHandlingTest {
                 "EVENT|false|bad|nonsense", "UNKNOWN|false|bad");
         Files.writeString(path, original);
         Storage storage = new Storage(path.toString());
-        assertEquals(1, storage.load().size());
-        assertTrue(storage.getLoadWarning().contains("2, 3, 4, 5, 6, 7, 8"));
+        assertEquals(2, storage.load().size());
+        assertTrue(storage.getLoadWarning().contains("2, 3, 4, 5, 7, 8"));
         assertThrows(IllegalStateException.class, () -> storage.save(List.of(new Todo("replacement"))));
         assertEquals(original, Files.readString(path));
-        assertTrue(new Doe(path.toString()).getWelcomeMessage().contains("saving is disabled"));
+        Doe doe = new Doe(path.toString());
+        assertFalse(doe.getWelcomeMessage().contains("could not be loaded"));
+        assertTrue(doe.getStartupWarning().contains("saving is paused"));
     }
 
     @Test
@@ -81,7 +83,9 @@ class ErrorHandlingTest {
         Doe doe = new Doe(parent.resolve("tasks.txt").toString());
         Files.writeString(parent, "blocks directory creation");
         String response = addTodo(doe, "read");
-        assertTrue(response.contains("have not been saved"));
+        assertTrue(response.contains("has not been saved"));
+        assertTrue(response.contains("How to fix:"));
+        assertTrue(doe.wasLastResponseWarning());
         assertFalse(response.contains("saved successfully"));
         Files.delete(parent);
         doe.getResponse("todo");
