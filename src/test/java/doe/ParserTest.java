@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class ParserTest {
 
     @Test
-    void mainMenu_fromString_aliasesAndWhitespace_commandRecognised() {
+    void mainMenu_aliasesAndWhitespace_commandRecognised() {
         assertEquals(Parser.MainMenu.NEIGH, Parser.MainMenu.fromString("  1  "));
         assertEquals(Parser.MainMenu.NEIGH, Parser.MainMenu.fromString("NeIgH"));
         assertEquals(Parser.MainMenu.MEOW, Parser.MainMenu.fromString("2"));
@@ -19,7 +19,7 @@ class ParserTest {
     }
 
     @Test
-    void todoMenu_fromString_allCommandsAndInvalidCommand_expectedValuesReturned() {
+    void todoMenu_allCommandsAndInvalidCommand_expectedValuesReturned() {
         assertEquals(Parser.TodoMenu.ADD, Parser.TodoMenu.fromString("1"));
         assertEquals(Parser.TodoMenu.REMOVE, Parser.TodoMenu.fromString("remove"));
         assertEquals(Parser.TodoMenu.VIEW, Parser.TodoMenu.fromString(" 3 "));
@@ -35,7 +35,7 @@ class ParserTest {
     }
 
     @Test
-    void taskMenu_fromString_allCommandsAndInvalidCommand_expectedValuesReturned() {
+    void taskMenu_allCommandsAndInvalidCommand_expectedValuesReturned() {
         assertEquals(Parser.TaskMenu.TODO, Parser.TaskMenu.fromString("todo"));
         assertEquals(Parser.TaskMenu.DEADLINE, Parser.TaskMenu.fromString("2"));
         assertEquals(Parser.TaskMenu.EVENT, Parser.TaskMenu.fromString(" EVENT "));

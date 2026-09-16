@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
@@ -39,6 +40,22 @@ test {
         showStackTraces = true
         showStandardStreams = false
     }
+}
+
+// Measure application logic separately from JavaFX rendering and launchers.
+jacoco {
+    toolVersion = '0.8.14'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+    }
+    classDirectories.setFrom(sourceSets.main.output.classesDirs.asFileTree.matching {
+        exclude 'doe/Main.class', 'doe/MainWindow.class', 'doe/DialogBox.class', 'doe/Launcher.class'
+    })
 }
 
 application {
