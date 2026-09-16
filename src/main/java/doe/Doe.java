@@ -78,9 +78,9 @@ public class Doe {
     private String respondToMainMenu(String input) {
         switch (Parser.MainMenu.fromString(input)) {
             case NEIGH:
-                return "eurhggghhhhh!";
+                return ">> EURHGGGHHHH!! <<";
             case MEOW:
-                return "meow!";
+                return ">> MEOW! (=^･ω･^=)";
             case LIST:
                 return "roles and responsibilities\n1. survive nus cs\n2. get a few internships\n"
                         + "3. work at mcdonalds\n4. retire as a manager (hopefully)";

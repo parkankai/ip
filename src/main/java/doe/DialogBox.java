@@ -72,7 +72,7 @@ public class DialogBox extends HBox {
      * @return Doe dialog box.
      */
     public static DialogBox getDoeDialog(String text, Image image) {
-        DialogBox box = new DialogBox(text, image, "DOE");
+        DialogBox box = new DialogBox(text, image, "୨୧  DOE  ୨୧");
         ObservableList<Node> reversed = FXCollections.observableArrayList(box.getChildren());
         Collections.reverse(reversed);
         box.getChildren().setAll(reversed);
