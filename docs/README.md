@@ -4,6 +4,8 @@
 
 **doe** stores todos, deadlines, and events, then helps you view, search, sort, complete, or remove them. Your changes are saved automatically, so your herd will still be here the next time **doe** starts.
 
+![Doe chatbot interface](Ui.png)
+
 ## Quick start
 
 Type a command into the message box and press <kbd>Enter</kbd>. **doe** shows numbered menus along the way; you may enter either the **number** or the **word** beside it.
