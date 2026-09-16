@@ -6,6 +6,16 @@
 
 ![Doe chatbot interface](Ui.png)
 
+## Download Guide
+
+Download `doe.jar` from the latest [releases](https://github.com/parkankai/ip/releases) page.
+
+1. Download `doe.jar`.
+2. **doe** requires **Java 25** and supports Windows, macOS, and Linux.
+3. Create a new folder for **doe**, move `doe.jar` into it, open a terminal in that folder, and run `java -jar doe.jar`.
+4. **doe** will open its graphical interface and automatically save your tasks in a file named `todo.txt` in the same folder.
+5. Enter its date and time as `20-09-2026 2359`.
+
 ## Quick start
 
 Type a command into the message box and press <kbd>Enter</kbd>. **doe** shows numbered menus along the way; you may enter either the **number** or the **word** beside it.
